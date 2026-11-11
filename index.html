@@ -64,7 +64,7 @@
             z-index: 50;
             background-color: var(--kite-surface);
             border-bottom: 1px solid var(--kite-border);
-            padding: 14px 16px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -72,27 +72,92 @@
 
         .header-left {
             display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .header-title-row {
+            display: flex;
             align-items: baseline;
-            gap: 8px;
+            gap: 6px;
         }
 
         .header-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             color: #ffffff;
             letter-spacing: -0.2px;
         }
 
         .header-count {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--kite-text-muted);
+        }
+
+        .header-last-updated {
+            font-size: 10px;
+            color: var(--kite-text-dim);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--kite-green);
+            box-shadow: 0 0 6px var(--kite-green);
+        }
+
+        .live-dot.updating {
+            background-color: var(--kite-blue);
+            box-shadow: 0 0 6px var(--kite-blue);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+        }
+
+        .btn-refresh-live {
+            background-color: rgba(56, 126, 209, 0.15);
+            border: 1px solid var(--kite-blue);
+            color: var(--kite-blue);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+        }
+
+        .btn-refresh-live:hover {
+            background-color: rgba(56, 126, 209, 0.25);
+        }
+
+        .btn-refresh-live:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spin-icon {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
 
         .icon-btn {
@@ -118,7 +183,7 @@
             background-color: var(--kite-blue);
             color: #ffffff;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 11px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: 600;
@@ -484,7 +549,7 @@
         .symbol-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .stock-sym {
@@ -502,6 +567,11 @@
             background-color: var(--kite-tag-bg);
             color: var(--kite-text-dim);
             letter-spacing: 0.4px;
+        }
+
+        .kite-tag.exchange {
+            color: var(--kite-blue);
+            background-color: rgba(56, 126, 209, 0.12);
         }
 
         .ltp-curval {
@@ -706,7 +776,7 @@
             text-transform: uppercase;
         }
 
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
             background: #141414;
             border: 1px solid var(--kite-border);
@@ -718,7 +788,7 @@
             transition: border-color 0.15s;
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             border-color: var(--kite-blue);
         }
 
@@ -753,6 +823,8 @@
             opacity: 0;
             pointer-events: none;
             transition: transform 0.2s, opacity 0.2s;
+            max-width: 90%;
+            text-align: center;
         }
 
         .kite-toast.show {
@@ -776,25 +848,32 @@
         <!-- Top App Bar -->
         <header class="kite-header">
             <div class="header-left">
-                <span class="header-title">Holdings</span>
-                <span class="header-count" id="header-count">(3)</span>
+                <div class="header-title-row">
+                    <span class="header-title">Holdings</span>
+                    <span class="header-count" id="header-count">(3)</span>
+                </div>
+                <div class="header-last-updated" id="last-updated-row">
+                    <span class="live-dot" id="live-indicator"></span>
+                    <span id="last-updated-text">Live NSE/BSE ready</span>
+                </div>
             </div>
             <div class="header-actions">
-                <button class="icon-btn" id="btn-toggle-chart" title="Toggle Allocation Donut Chart">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                    </svg>
-                </button>
-                <button class="icon-btn" id="btn-refresh-sim" title="Simulate market fluctuation">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button class="btn-refresh-live" id="btn-refresh-live" title="Fetch live NSE/BSE quotes from Yahoo Finance">
+                    <svg id="refresh-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="23 4 23 10 17 10"></polyline>
                         <polyline points="1 20 1 14 7 14"></polyline>
                         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
+                    <span id="refresh-btn-label">Refresh Live</span>
+                </button>
+                <button class="icon-btn" id="btn-toggle-chart" title="Toggle Allocation Donut Chart">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    </svg>
                 </button>
                 <button class="btn-add" id="btn-open-add">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
@@ -874,7 +953,7 @@
 
         <!-- Footer -->
         <footer class="kite-footer">
-            Zerodha Kite Dark Theme • LocalStorage Synced
+            Zerodha Kite Dark Theme • Live Yahoo Finance Quotes (.NS/.BO)
         </footer>
     </div>
 
@@ -916,15 +995,19 @@
                 </div>
             </div>
             <div class="drawer-actions">
-                <button class="btn-kite btn-kite-blue" id="d-btn-update-price">
+                <button class="btn-kite btn-kite-blue" id="d-btn-fetch-live">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
-                    Update LTP
+                    Fetch Live LTP
                 </button>
                 <button class="btn-kite btn-kite-secondary" id="d-btn-edit">
                     Edit Holding
+                </button>
+                <button class="btn-kite btn-kite-secondary" id="d-btn-manual-price">
+                    Manual LTP
                 </button>
                 <button class="btn-kite btn-kite-danger" id="d-btn-delete">
                     Delete from Portfolio
@@ -942,9 +1025,18 @@
             </div>
             <form id="stock-form">
                 <input type="hidden" id="form-stock-id">
-                <div class="form-group">
-                    <label class="form-label" for="inp-symbol">Symbol *</label>
-                    <input type="text" id="inp-symbol" class="form-input" placeholder="e.g. HDFCBANK" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="inp-symbol">Symbol *</label>
+                        <input type="text" id="inp-symbol" class="form-input" placeholder="e.g. HDFCBANK" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inp-exchange">Exchange *</label>
+                        <select id="inp-exchange" class="form-select">
+                            <option value="NSE" selected>NSE (.NS)</option>
+                            <option value="BSE">BSE (.BO)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="inp-name">Instrument Name</label>
@@ -1002,11 +1094,12 @@
     <div class="kite-toast" id="kite-toast">Toast notification</div>
 
     <script>
-        // Exact user holdings initialized
+        // Exact user holdings initialized with exchange
         const INITIAL_HOLDINGS = [
             {
                 id: 'hold-1',
                 symbol: 'HDFCBANK',
+                exchange: 'NSE',
                 name: 'HDFC Bank Ltd.',
                 qty: 1,
                 buyPrice: 720.55,
@@ -1016,6 +1109,7 @@
             {
                 id: 'hold-2',
                 symbol: 'NIFTYBEES',
+                exchange: 'NSE',
                 name: 'Nippon India ETF Nifty BeES',
                 qty: 1,
                 buyPrice: 272.52,
@@ -1025,6 +1119,7 @@
             {
                 id: 'hold-3',
                 symbol: 'ONGC',
+                exchange: 'NSE',
                 name: 'Oil & Natural Gas Corp Ltd.',
                 qty: 1,
                 buyPrice: 234.19,
@@ -1033,11 +1128,14 @@
             }
         ];
 
-        // Storage key v2 for updated holdings
-        const STORAGE_KEY = 'zerodha_kite_holdings_v2';
+        // Storage keys
+        const STORAGE_KEY = 'zerodha_kite_holdings_v3';
+        const TIME_KEY = 'zerodha_kite_last_updated_v3';
+
         let holdings = [];
         let selectedHoldingId = null;
         let activeFilter = 'all';
+        let isFetchingPrices = false;
 
         // Palette for Kite donut slices
         const SLICE_COLORS = [
@@ -1054,7 +1152,7 @@
             const el = document.getElementById('kite-toast');
             el.textContent = msg;
             el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 2400);
+            setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         function formatINR(val, prefix = true) {
@@ -1079,6 +1177,10 @@
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) {
                     holdings = JSON.parse(raw);
+                    // Ensure exchange is set on all items
+                    holdings.forEach(h => {
+                        if (!h.exchange) h.exchange = 'NSE';
+                    });
                 } else {
                     holdings = JSON.parse(JSON.stringify(INITIAL_HOLDINGS));
                     saveData();
@@ -1086,11 +1188,21 @@
             } catch (e) {
                 holdings = JSON.parse(JSON.stringify(INITIAL_HOLDINGS));
             }
+
+            const savedTime = localStorage.getItem(TIME_KEY);
+            if (savedTime) {
+                updateTimestampDisplay(savedTime);
+            }
         }
 
         function saveData() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(holdings));
             renderAll();
+        }
+
+        function updateTimestampDisplay(timeStr) {
+            const el = document.getElementById('last-updated-text');
+            if (el) el.textContent = `Updated: ${timeStr}`;
         }
 
         function getMetrics(stock) {
@@ -1309,6 +1421,7 @@
                 const m = getMetrics(stock);
                 const isProfit = m.totalPnl >= 0;
                 const sign = isProfit ? '+' : '';
+                const exchange = stock.exchange || 'NSE';
 
                 return `
                     <div class="holding-item" onclick="openDrawer('${stock.id}')">
@@ -1321,6 +1434,7 @@
                         <div class="holding-row-bottom">
                             <div class="symbol-badge">
                                 <span class="stock-sym">${escapeHTML(stock.symbol)}</span>
+                                <span class="kite-tag exchange">${exchange}</span>
                                 <span class="kite-tag">CNC</span>
                             </div>
                             <div class="ltp-curval">
@@ -1338,6 +1452,138 @@
             );
         }
 
+        // ==========================================
+        // Yahoo Finance Live Price Fetching & Proxies
+        // ==========================================
+        async function fetchStockQuote(symbol, exchange) {
+            const ex = (exchange || 'NSE').toUpperCase();
+            const suffix = ex === 'BSE' ? '.BO' : '.NS';
+            const fullTicker = `${symbol.trim().toUpperCase()}${suffix}`;
+            const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(fullTicker)}?interval=1d`;
+
+            // List of CORS proxies to try with fallback
+            const proxyUrls = [
+                // 1. AllOrigins (returns JSON wrapper with .contents)
+                `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+                // 2. AllOrigins raw
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+                // 3. Codetabs proxy
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+                // 4. Direct fetch (works in browser environments with CORS extension / native webviews)
+                targetUrl
+            ];
+
+            let lastError = null;
+
+            for (const pUrl of proxyUrls) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 7000); // 7s timeout per proxy
+
+                    const res = await fetch(pUrl, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (!res.ok) continue;
+
+                    let data = await res.json();
+                    // Handle allorigins get wrapper
+                    if (data && typeof data.contents === 'string') {
+                        try {
+                            data = JSON.parse(data.contents);
+                        } catch (e) {
+                            continue;
+                        }
+                    }
+
+                    const meta = data?.chart?.result?.[0]?.meta;
+                    if (meta && typeof meta.regularMarketPrice === 'number') {
+                        const price = meta.regularMarketPrice;
+                        const prevClose = typeof meta.chartPreviousClose === 'number' 
+                            ? meta.chartPreviousClose 
+                            : (typeof meta.previousClose === 'number' ? meta.previousClose : price);
+
+                        return {
+                            success: true,
+                            price,
+                            prevClose,
+                            currency: meta.currency || 'INR'
+                        };
+                    }
+                } catch (err) {
+                    lastError = err;
+                    // continue to next proxy
+                }
+            }
+
+            return {
+                success: false,
+                error: lastError ? lastError.message : 'Unable to reach quote endpoint'
+            };
+        }
+
+        async function refreshAllLivePrices() {
+            if (isFetchingPrices) return;
+            if (holdings.length === 0) {
+                toast('No holdings to refresh');
+                return;
+            }
+
+            isFetchingPrices = true;
+            const refreshBtn = document.getElementById('btn-refresh-live');
+            const refreshIcon = document.getElementById('refresh-icon');
+            const labelEl = document.getElementById('refresh-btn-label');
+            const liveDot = document.getElementById('live-indicator');
+
+            refreshBtn.disabled = true;
+            refreshIcon.classList.add('spin-icon');
+            liveDot.classList.add('updating');
+            labelEl.textContent = 'Fetching...';
+
+            let updatedCount = 0;
+            let failedSymbols = [];
+
+            try {
+                // Fetch each holding in parallel with timeout
+                const promises = holdings.map(async (stock) => {
+                    const result = await fetchStockQuote(stock.symbol, stock.exchange);
+                    if (result.success && result.price > 0) {
+                        stock.cmp = parseFloat(result.price.toFixed(2));
+                        if (result.prevClose > 0) {
+                            stock.prevClose = parseFloat(result.prevClose.toFixed(2));
+                        }
+                        updatedCount++;
+                    } else {
+                        failedSymbols.push(stock.symbol);
+                    }
+                });
+
+                await Promise.all(promises);
+
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                localStorage.setItem(TIME_KEY, timeString);
+                updateTimestampDisplay(timeString);
+
+                saveData();
+
+                if (failedSymbols.length === 0) {
+                    toast(`Updated ${updatedCount} live quote${updatedCount > 1 ? 's' : ''}`);
+                } else if (updatedCount > 0) {
+                    toast(`Updated ${updatedCount} quotes. Kept existing LTP for ${failedSymbols.join(', ')}`);
+                } else {
+                    toast('Network/proxy busy. Existing LTP preserved.');
+                }
+            } catch (err) {
+                toast('Failed to fetch live prices. Kept existing data.');
+            } finally {
+                isFetchingPrices = false;
+                refreshBtn.disabled = false;
+                refreshIcon.classList.remove('spin-icon');
+                liveDot.classList.remove('updating');
+                labelEl.textContent = 'Refresh Live';
+            }
+        }
+
         // Action Drawer
         window.openDrawer = function(id) {
             const stock = holdings.find(s => s.id === id);
@@ -1347,9 +1593,11 @@
             const m = getMetrics(stock);
             const isProfit = m.totalPnl >= 0;
             const sign = isProfit ? '+' : '';
+            const exchange = stock.exchange || 'NSE';
+            const suffix = exchange === 'BSE' ? '.BO' : '.NS';
 
             document.getElementById('d-symbol').textContent = stock.symbol;
-            document.getElementById('d-name').textContent = `${stock.name || stock.symbol} • NSE (CNC)`;
+            document.getElementById('d-name').textContent = `${stock.name || stock.symbol} • ${stock.symbol}${suffix} (${exchange} CNC)`;
             document.getElementById('d-qty').textContent = stock.qty;
             document.getElementById('d-avg').textContent = formatINR(stock.buyPrice);
             document.getElementById('d-invested').textContent = formatINR(m.invested);
@@ -1372,8 +1620,27 @@
             if (e.target === document.getElementById('drawer-overlay')) closeDrawer();
         });
 
-        // LTP Quick Update
-        document.getElementById('d-btn-update-price').addEventListener('click', () => {
+        // Single stock live fetch from drawer
+        document.getElementById('d-btn-fetch-live').addEventListener('click', async () => {
+            const stock = holdings.find(s => s.id === selectedHoldingId);
+            if (!stock) return;
+            toast(`Fetching live quote for ${stock.symbol}...`);
+            const res = await fetchStockQuote(stock.symbol, stock.exchange);
+            if (res.success && res.price > 0) {
+                stock.cmp = parseFloat(res.price.toFixed(2));
+                if (res.prevClose > 0) {
+                    stock.prevClose = parseFloat(res.prevClose.toFixed(2));
+                }
+                saveData();
+                openDrawer(stock.id);
+                toast(`Updated ${stock.symbol} live LTP: ₹${stock.cmp.toFixed(2)}`);
+            } else {
+                toast(`Failed to fetch ${stock.symbol}. Kept existing LTP.`);
+            }
+        });
+
+        // Manual LTP Update
+        document.getElementById('d-btn-manual-price').addEventListener('click', () => {
             const stock = holdings.find(s => s.id === selectedHoldingId);
             if (!stock) return;
             closeDrawer();
@@ -1413,6 +1680,7 @@
             document.getElementById('form-stock-id').value = stock.id;
             document.getElementById('stock-modal-title').textContent = `Edit Holding • ${stock.symbol}`;
             document.getElementById('inp-symbol').value = stock.symbol;
+            document.getElementById('inp-exchange').value = stock.exchange || 'NSE';
             document.getElementById('inp-name').value = stock.name || '';
             document.getElementById('inp-qty').value = stock.qty;
             document.getElementById('inp-avg').value = stock.buyPrice;
@@ -1438,6 +1706,7 @@
         document.getElementById('btn-open-add').addEventListener('click', () => {
             document.getElementById('stock-form').reset();
             document.getElementById('form-stock-id').value = '';
+            document.getElementById('inp-exchange').value = 'NSE';
             document.getElementById('stock-modal-title').textContent = 'Add Holding';
             document.getElementById('stock-modal').classList.add('active');
             setTimeout(() => document.getElementById('inp-symbol').focus(), 150);
@@ -1454,6 +1723,7 @@
             e.preventDefault();
             const id = document.getElementById('form-stock-id').value || 'hold-' + Date.now();
             const symbol = document.getElementById('inp-symbol').value.trim().toUpperCase();
+            const exchange = document.getElementById('inp-exchange').value || 'NSE';
             const name = document.getElementById('inp-name').value.trim() || symbol;
             const qty = parseFloat(document.getElementById('inp-qty').value);
             const buyPrice = parseFloat(document.getElementById('inp-avg').value);
@@ -1461,30 +1731,22 @@
             const prevClose = parseFloat(document.getElementById('inp-prev-close').value) || cmp;
 
             const existingIdx = holdings.findIndex(s => s.id === id);
-            const item = { id, symbol, name, qty, buyPrice, cmp, prevClose };
+            const item = { id, symbol, exchange, name, qty, buyPrice, cmp, prevClose };
 
             if (existingIdx >= 0) {
                 holdings[existingIdx] = item;
-                toast(`Updated ${symbol}`);
+                toast(`Updated ${symbol} (${exchange})`);
             } else {
                 holdings.unshift(item);
-                toast(`Added ${symbol}`);
+                toast(`Added ${symbol} (${exchange})`);
             }
 
             saveData();
             closeStockModal();
         });
 
-        // Market Sim Button (random ±0.3% to ±1.5% fluctuation)
-        document.getElementById('btn-refresh-sim').addEventListener('click', () => {
-            if (holdings.length === 0) return;
-            holdings.forEach(stock => {
-                const delta = (Math.random() * 2.4 - 1.1) / 100;
-                stock.cmp = parseFloat((stock.cmp * (1 + delta)).toFixed(2));
-            });
-            saveData();
-            toast('Simulated market tick update');
-        });
+        // Refresh Live Prices Button in Header
+        document.getElementById('btn-refresh-live').addEventListener('click', refreshAllLivePrices);
 
         // Toggle Chart View
         const chartBtn = document.getElementById('btn-toggle-chart');
