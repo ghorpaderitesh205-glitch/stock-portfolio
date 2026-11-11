@@ -2,431 +2,654 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockFolio | Sleek Indian Stock Portfolio Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Holdings • Zerodha Kite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #090d16;
-            --bg-secondary: #0f172a;
-            --bg-card: rgba(19, 29, 51, 0.7);
-            --bg-card-hover: rgba(26, 38, 66, 0.85);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.16);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --accent-primary: #38bdf8;
-            --accent-indigo: #6366f1;
-            --profit: #10b981;
-            --profit-bg: rgba(16, 185, 129, 0.12);
-            --profit-border: rgba(16, 185, 129, 0.25);
-            --loss: #f43f5e;
-            --loss-bg: rgba(244, 63, 94, 0.12);
-            --loss-border: rgba(244, 63, 94, 0.25);
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            --kite-bg: #121212;
+            --kite-surface: #191919;
+            --kite-card: #202020;
+            --kite-card-hover: #262626;
+            --kite-border: #2a2a2a;
+            --kite-border-subtle: #222222;
+            --kite-blue: #387ed1;
+            --kite-blue-hover: #2e6db9;
+            --kite-green: #4caf50;
+            --kite-green-dim: rgba(76, 175, 80, 0.12);
+            --kite-red: #df514c;
+            --kite-red-dim: rgba(223, 81, 76, 0.12);
+            --kite-text: #e0e0e0;
+            --kite-text-muted: #8e8e8e;
+            --kite-text-dim: #616161;
+            --kite-tag-bg: #2d2d2d;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-primary);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.07) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%);
-            color: var(--text-primary);
+            background-color: var(--kite-bg);
+            color: var(--kite-text);
+            font-family: var(--font-family);
+            font-size: 13px;
+            line-height: 1.4;
             min-height: 100vh;
-            padding: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mobile-viewport {
+            width: 100%;
+            max-width: 540px;
+            min-height: 100vh;
+            background-color: var(--kite-surface);
             display: flex;
             flex-direction: column;
-            align-items: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
         }
 
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 1240px;
-        }
-
-        /* Header */
-        header {
+        /* Top Header */
+        .kite-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: var(--kite-surface);
+            border-bottom: 1px solid var(--kite-border);
+            padding: 14px 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 16px;
+            justify-content: space-between;
         }
 
-        .brand {
+        .header-left {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .header-count {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--kite-text-muted);
+        }
+
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #38bdf8, #6366f1);
-            border-radius: var(--radius-md);
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--kite-text-muted);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 22px;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            transition: color 0.15s, background 0.15s;
         }
 
-        .brand-text h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #f8fafc, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .icon-btn:hover, .icon-btn.active {
+            color: var(--kite-blue);
+            background: rgba(56, 126, 209, 0.1);
         }
 
-        .brand-text p {
-            font-size: 0.825rem;
-            color: var(--text-secondary);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid transparent;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #38bdf8, #2563eb);
+        .btn-add {
+            background-color: var(--kite-blue);
             color: #ffffff;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-        }
-
-        .btn-primary:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--border-hover);
-        }
-
-        .btn-icon {
-            padding: 8px;
-            border-radius: var(--radius-sm);
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .btn-icon:hover {
-            color: var(--text-primary);
-            border-color: var(--border-hover);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-danger {
-            background: var(--loss-bg);
-            border-color: var(--loss-border);
-            color: var(--loss);
-        }
-
-        .btn-danger:hover {
-            background: var(--loss);
-            color: #fff;
-        }
-
-        /* Summary Cards */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
-            margin-bottom: 28px;
-        }
-
-        .summary-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .summary-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-2px);
-        }
-
-        .summary-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--card-accent, transparent);
-        }
-
-        .card-label {
-            font-size: 0.8rem;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
+            cursor: pointer;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .card-value {
-            font-size: 1.85rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .card-subtext {
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge {
-            display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
+            transition: background 0.15s;
         }
 
-        .badge-profit {
-            background: var(--profit-bg);
-            color: var(--profit);
-            border: 1px solid var(--profit-border);
+        .btn-add:hover {
+            background-color: var(--kite-blue-hover);
         }
 
-        .badge-loss {
-            background: var(--loss-bg);
-            color: var(--loss);
-            border: 1px solid var(--loss-border);
+        /* Summary Card */
+        .summary-box {
+            padding: 16px;
+            background-color: var(--kite-surface);
+            border-bottom: 8px solid var(--kite-bg);
         }
 
-        .badge-neutral {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
+        .summary-row-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
         }
 
-        /* Controls Bar */
-        .controls-bar {
+        .summary-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: var(--kite-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .summary-num {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background-color: var(--kite-border);
+            margin: 10px 0;
+        }
+
+        .pnl-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
-            gap: 16px;
-            flex-wrap: wrap;
+            padding-top: 4px;
         }
 
-        .search-box {
+        .pnl-label-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pnl-main-label {
+            font-size: 12px;
+            color: var(--kite-text-muted);
+            font-weight: 500;
+        }
+
+        .pnl-sub-label {
+            font-size: 11px;
+            color: var(--kite-text-dim);
+        }
+
+        .pnl-values {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pnl-amount {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .pnl-today {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .green {
+            color: var(--kite-green);
+        }
+
+        .red {
+            color: var(--kite-red);
+        }
+
+        /* Chart Section */
+        .chart-section {
+            padding: 16px;
+            background-color: var(--kite-surface);
+            border-bottom: 8px solid var(--kite-bg);
+            transition: all 0.3s ease;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .chart-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--kite-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 6px 0;
+        }
+
+        .donut-wrapper {
+            position: relative;
+            width: 170px;
+            height: 170px;
+        }
+
+        .donut-svg {
+            transform: rotate(-90deg);
+            border-radius: 50%;
+        }
+
+        .donut-segment {
+            cursor: pointer;
+            transition: stroke-width 0.2s, opacity 0.2s;
+            stroke-linecap: butt;
+        }
+
+        .donut-segment:hover, .donut-segment.active-segment {
+            stroke-width: 26;
+            opacity: 1 !important;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
+        }
+
+        .donut-center-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            width: 90px;
+        }
+
+        .center-label {
+            font-size: 10px;
+            color: var(--kite-text-muted);
+            text-transform: uppercase;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .center-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 2px;
+        }
+
+        .center-pct {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--kite-blue);
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .legend-item:hover, .legend-item.active-legend {
+            background-color: var(--kite-card);
+        }
+
+        .legend-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-symbol {
+            font-weight: 600;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .legend-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .legend-pct {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--kite-text);
+        }
+
+        .legend-amt {
+            font-size: 10px;
+            color: var(--kite-text-muted);
+        }
+
+        /* Search & Filter Bar */
+        .filter-bar {
+            padding: 10px 16px;
+            background-color: var(--kite-surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--kite-border);
+            gap: 10px;
+        }
+
+        .search-wrapper {
             position: relative;
             flex: 1;
-            min-width: 240px;
-            max-width: 380px;
-        }
-
-        .search-box input {
-            width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 10px 14px 10px 38px;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .search-box input:focus {
-            border-color: var(--accent-primary);
         }
 
         .search-icon {
             position: absolute;
-            left: 12px;
+            left: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--kite-text-dim);
             pointer-events: none;
         }
 
-        .action-group {
+        .search-input {
+            width: 100%;
+            background-color: var(--kite-card);
+            border: 1px solid var(--kite-border);
+            border-radius: 4px;
+            padding: 6px 8px 6px 30px;
+            font-size: 12px;
+            color: var(--kite-text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--kite-blue);
+        }
+
+        .filter-tags {
             display: flex;
-            gap: 10px;
-            align-items: center;
+            gap: 6px;
         }
 
-        /* Table Card */
-        .table-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        thead {
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            padding: 14px 18px;
-            font-size: 0.775rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        th.sortable {
+        .filter-tag {
+            background-color: var(--kite-card);
+            border: 1px solid var(--kite-border);
+            color: var(--kite-text-muted);
+            padding: 5px 9px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
             cursor: pointer;
-            user-select: none;
+            transition: all 0.15s;
         }
 
-        th.sortable:hover {
-            color: var(--text-primary);
+        .filter-tag.active {
+            background-color: rgba(56, 126, 209, 0.15);
+            color: var(--kite-blue);
+            border-color: var(--kite-blue);
         }
 
-        td {
-            padding: 16px 18px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            white-space: nowrap;
+        /* Holdings List (Zerodha Kite Style) */
+        .holdings-list {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--kite-surface);
         }
 
-        tbody tr {
+        .holding-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--kite-border-subtle);
+            cursor: pointer;
             transition: background 0.15s;
+            position: relative;
         }
 
-        tbody tr:hover {
-            background: var(--bg-card-hover);
+        .holding-item:hover, .holding-item:active {
+            background-color: var(--kite-card);
         }
 
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .stock-info {
+        .holding-row-top {
             display: flex;
-            flex-direction: column;
-            gap: 3px;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
         }
 
-        .stock-symbol {
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.2px;
+        .qty-avg {
+            font-size: 12px;
+            color: var(--kite-text-muted);
+            font-weight: 400;
         }
 
-        .stock-name {
-            font-size: 0.775rem;
-            color: var(--text-muted);
+        .qty-avg strong {
+            color: var(--kite-text);
+            font-weight: 500;
         }
 
-        .text-right {
+        .item-pnl {
+            font-size: 13px;
+            font-weight: 600;
             text-align: right;
         }
 
-        .text-profit {
-            color: var(--profit);
+        .holding-row-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .text-loss {
-            color: var(--loss);
+        .symbol-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .empty-state {
-            padding: 60px 20px;
-            text-align: center;
-            color: var(--text-secondary);
+        .stock-sym {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.2px;
         }
 
-        .empty-state svg {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 14px;
-            color: var(--text-muted);
+        .kite-tag {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 4px;
+            border-radius: 2px;
+            background-color: var(--kite-tag-bg);
+            color: var(--kite-text-dim);
+            letter-spacing: 0.4px;
         }
 
-        /* Modal */
+        .ltp-curval {
+            text-align: right;
+            font-size: 12px;
+            color: var(--kite-text-muted);
+        }
+
+        .ltp-curval strong {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        /* Bottom Action Drawer / Modal */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(2px);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer-content {
+            width: 100%;
+            max-width: 540px;
+            background-color: #1e1e1e;
+            border-top: 1px solid var(--kite-border);
+            border-radius: 12px 12px 0 0;
+            padding: 20px 16px 28px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(100%);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .drawer-overlay.active .drawer-content {
+            transform: translateY(0);
+        }
+
+        .drawer-handle {
+            width: 36px;
+            height: 4px;
+            background: #3a3a3a;
+            border-radius: 2px;
+            margin: -8px auto 16px;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .drawer-stock-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .drawer-stock-desc {
+            font-size: 11px;
+            color: var(--kite-text-muted);
+            margin-top: 2px;
+        }
+
+        .drawer-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #171717;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            border: 1px solid var(--kite-border);
+        }
+
+        .d-metric-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .d-label {
+            font-size: 10px;
+            color: var(--kite-text-muted);
+            text-transform: uppercase;
+        }
+
+        .d-val {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .drawer-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-kite {
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.15s;
+        }
+
+        .btn-kite-blue {
+            background-color: var(--kite-blue);
+            color: #ffffff;
+        }
+
+        .btn-kite-secondary {
+            background-color: #2b2b2b;
+            color: var(--kite-text);
+            border: 1px solid var(--kite-border);
+        }
+
+        .btn-kite-danger {
+            background-color: var(--kite-red-dim);
+            color: var(--kite-red);
+            border: 1px solid rgba(223, 81, 76, 0.25);
+            grid-column: span 2;
+        }
+
+        /* Generic Modal Form */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -434,15 +657,15 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(3px);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.25s ease;
+            transition: opacity 0.2s;
         }
 
         .modal-overlay.active {
@@ -450,484 +673,442 @@
             visibility: visible;
         }
 
-        .modal-content {
-            background: #111a2e;
-            border: 1px solid var(--border-hover);
-            border-radius: var(--radius-lg);
+        .modal-box {
+            background: #1e1e1e;
+            border: 1px solid var(--kite-border);
+            border-radius: 8px;
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            transform: scale(0.95);
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         }
 
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            padding: 20px 24px;
+        .modal-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-header h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .modal-body {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            margin-bottom: 12px;
         }
 
-        .form-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--kite-text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #141414;
+            border: 1px solid var(--kite-border);
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: var(--kite-blue);
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .form-input {
-            width: 100%;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus {
-            border-color: var(--accent-primary);
+            gap: 10px;
         }
 
         .modal-footer {
-            padding: 18px 24px;
-            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
-            background: rgba(15, 23, 42, 0.5);
+            gap: 8px;
+            margin-top: 18px;
         }
 
-        /* Quick Toast Notification */
-        .toast-container {
+        /* Toast */
+        .kite-toast {
             position: fixed;
             bottom: 24px;
-            right: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 1000;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #3d3d3d;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s, opacity 0.2s;
         }
 
-        .toast {
-            background: #1e293b;
-            color: #fff;
-            border: 1px solid var(--border-hover);
-            padding: 12px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+        .kite-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; transform: translateY(10px); }
-        }
-
-        /* Footer */
-        footer {
-            margin-top: auto;
+        /* Footer info */
+        .kite-footer {
+            padding: 18px 16px 28px;
             text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            padding-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 14px;
-            }
-            .card-value {
-                font-size: 1.5rem;
-            }
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-            .controls-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .search-box {
-                max-width: none;
-            }
-            .action-group {
-                justify-content: space-between;
-            }
+            font-size: 11px;
+            color: var(--kite-text-dim);
+            background-color: var(--kite-surface);
+            border-top: 1px solid var(--kite-border-subtle);
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header>
-            <div class="brand">
-                <div class="logo-icon">₹</div>
-                <div class="brand-text">
-                    <h1>StockFolio</h1>
-                    <p>Indian Equities & Portfolio Tracker</p>
-                </div>
+    <div class="mobile-viewport">
+        <!-- Top App Bar -->
+        <header class="kite-header">
+            <div class="header-left">
+                <span class="header-title">Holdings</span>
+                <span class="header-count" id="header-count">(3)</span>
             </div>
             <div class="header-actions">
-                <button class="btn btn-secondary" id="btn-simulate" title="Simulate small market fluctuations">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <button class="icon-btn" id="btn-toggle-chart" title="Toggle Allocation Donut Chart">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                     </svg>
-                    Live Sim
                 </button>
-                <button class="btn btn-primary" id="btn-open-add-modal">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <button class="icon-btn" id="btn-refresh-sim" title="Simulate market fluctuation">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
-                    Add Stock
+                </button>
+                <button class="btn-add" id="btn-open-add">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add
                 </button>
             </div>
         </header>
 
-        <!-- Summary Cards -->
-        <div class="summary-grid">
-            <!-- Current Value -->
-            <div class="summary-card" style="--card-accent: #38bdf8;">
-                <div class="card-label">
-                    <span>Current Portfolio Value</span>
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="var(--accent-primary)">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        <!-- Zerodha Kite Summary Card -->
+        <div class="summary-box">
+            <div class="summary-row-top">
+                <div class="summary-col">
+                    <span class="summary-label">Total Investment</span>
+                    <span class="summary-num" id="sum-invested">₹1,227.26</span>
+                </div>
+                <div class="summary-col" style="text-align: right;">
+                    <span class="summary-label">Current Value</span>
+                    <span class="summary-num" id="sum-current">₹1,328.06</span>
+                </div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="pnl-row">
+                <div class="pnl-label-group">
+                    <span class="pnl-main-label">Profit & Loss</span>
+                    <span class="pnl-sub-label">Today's P&L</span>
+                </div>
+                <div class="pnl-values">
+                    <span class="pnl-amount green" id="sum-total-pnl">+100.80 (+8.21%)</span>
+                    <span class="pnl-today green" id="sum-today-pnl">+0.00 (+0.00%)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Donut Chart Section (Allocation by Stock) -->
+        <div class="chart-section" id="chart-section">
+            <div class="chart-header">
+                <span class="chart-title">Portfolio Allocation Weight</span>
+                <span style="font-size: 11px; color: var(--kite-text-dim);">Tap slice for details</span>
+            </div>
+            <div class="chart-container">
+                <div class="donut-wrapper">
+                    <svg class="donut-svg" width="170" height="170" viewBox="0 0 170 170" id="donut-svg">
+                        <!-- Slices rendered by JS -->
                     </svg>
+                    <div class="donut-center-info" id="donut-center">
+                        <div class="center-label" id="donut-center-name">PORTFOLIO</div>
+                        <div class="center-val" id="donut-center-val">₹1,328.06</div>
+                        <div class="center-pct" id="donut-center-pct">100%</div>
+                    </div>
                 </div>
-                <div class="card-value mono" id="total-current-val">₹0.00</div>
-                <div class="card-subtext">
-                    <span class="text-secondary" id="holdings-count">0 Holdings</span>
-                </div>
-            </div>
-
-            <!-- Invested Amount -->
-            <div class="summary-card" style="--card-accent: #6366f1;">
-                <div class="card-label">
-                    <span>Invested Capital</span>
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="var(--accent-indigo)">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div class="card-value mono" id="total-invested-val">₹0.00</div>
-                <div class="card-subtext">
-                    <span class="text-secondary">Base capital invested</span>
-                </div>
-            </div>
-
-            <!-- Total P&L -->
-            <div class="summary-card" id="card-total-pnl" style="--card-accent: #10b981;">
-                <div class="card-label">
-                    <span>Total Profit / Loss</span>
-                    <span id="badge-total-pnl-pct" class="badge badge-profit mono">+0.00%</span>
-                </div>
-                <div class="card-value mono" id="total-pnl-val">₹0.00</div>
-                <div class="card-subtext">
-                    <span id="total-pnl-desc">Overall portfolio return</span>
-                </div>
-            </div>
-
-            <!-- Today's P&L -->
-            <div class="summary-card" id="card-today-pnl" style="--card-accent: #f59e0b;">
-                <div class="card-label">
-                    <span>Today's Gain / Loss</span>
-                    <span id="badge-today-pnl-pct" class="badge badge-neutral mono">+0.00%</span>
-                </div>
-                <div class="card-value mono" id="today-pnl-val">₹0.00</div>
-                <div class="card-subtext">
-                    <span id="today-pnl-desc">Calculated vs Prev. Close</span>
+                <div class="chart-legend" id="chart-legend">
+                    <!-- Legend items rendered by JS -->
                 </div>
             </div>
         </div>
 
-        <!-- Controls: Search & Filters -->
-        <div class="controls-bar">
-            <div class="search-box">
-                <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <!-- Search & Filter Bar -->
+        <div class="filter-bar">
+            <div class="search-wrapper">
+                <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" id="search-input" placeholder="Search symbol or company...">
+                <input type="text" class="search-input" id="search-input" placeholder="Search holdings...">
             </div>
-            <div class="action-group">
-                <button class="btn btn-secondary" id="btn-reset-demo" title="Restore sample portfolio">
-                    Reset Demo Data
-                </button>
-            </div>
-        </div>
-
-        <!-- Holdings Table -->
-        <div class="table-card">
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="sortable" data-sort="symbol">Stock & Symbol ⬍</th>
-                            <th class="text-right sortable" data-sort="qty">Qty ⬍</th>
-                            <th class="text-right sortable" data-sort="avgPrice">Avg. Buy (₹) ⬍</th>
-                            <th class="text-right sortable" data-sort="invested">Invested (₹) ⬍</th>
-                            <th class="text-right sortable" data-sort="cmp">CMP (₹) ⬍</th>
-                            <th class="text-right sortable" data-sort="currentVal">Current (₹) ⬍</th>
-                            <th class="text-right sortable" data-sort="todayPnl">Today's P&L ⬍</th>
-                            <th class="text-right sortable" data-sort="totalPnl">Total P&L ⬍</th>
-                            <th class="text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="holdings-tbody">
-                        <!-- Injected by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <h3>No stocks found</h3>
-                <p>Click "Add Stock" or "Reset Demo Data" to get started.</p>
+            <div class="filter-tags">
+                <button class="filter-tag active" data-filter="all">All</button>
+                <button class="filter-tag" data-filter="profit">Profit</button>
+                <button class="filter-tag" data-filter="loss">Loss</button>
             </div>
         </div>
 
-        <footer>
-            StockFolio • Auto-saved to LocalStorage • Sleek Dark Portfolio Dashboard
+        <!-- Holdings List -->
+        <div class="holdings-list" id="holdings-container">
+            <!-- Injected by JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="kite-footer">
+            Zerodha Kite Dark Theme • LocalStorage Synced
         </footer>
     </div>
 
-    <!-- Add / Edit Stock Modal -->
+    <!-- Holding Action Drawer (Tap on a holding) -->
+    <div class="drawer-overlay" id="drawer-overlay">
+        <div class="drawer-content">
+            <div class="drawer-handle"></div>
+            <div class="drawer-header">
+                <div>
+                    <div class="drawer-stock-title" id="d-symbol">HDFCBANK</div>
+                    <div class="drawer-stock-desc" id="d-name">HDFC Bank Limited • NSE (CNC)</div>
+                </div>
+                <button class="icon-btn" id="d-close" style="width: 24px; height: 24px;">✕</button>
+            </div>
+            <div class="drawer-metrics">
+                <div class="d-metric-col">
+                    <span class="d-label">Quantity</span>
+                    <span class="d-val" id="d-qty">1</span>
+                </div>
+                <div class="d-metric-col">
+                    <span class="d-label">Average Price</span>
+                    <span class="d-val" id="d-avg">₹720.55</span>
+                </div>
+                <div class="d-metric-col">
+                    <span class="d-label">Invested Amount</span>
+                    <span class="d-val" id="d-invested">₹720.55</span>
+                </div>
+                <div class="d-metric-col">
+                    <span class="d-label">Current Value</span>
+                    <span class="d-val" id="d-curval">₹806.60</span>
+                </div>
+                <div class="d-metric-col">
+                    <span class="d-label">LTP (Last Traded Price)</span>
+                    <span class="d-val" id="d-ltp">₹806.60</span>
+                </div>
+                <div class="d-metric-col">
+                    <span class="d-label">Total P&L</span>
+                    <span class="d-val" id="d-pnl">+86.05 (+11.94%)</span>
+                </div>
+            </div>
+            <div class="drawer-actions">
+                <button class="btn-kite btn-kite-blue" id="d-btn-update-price">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Update LTP
+                </button>
+                <button class="btn-kite btn-kite-secondary" id="d-btn-edit">
+                    Edit Holding
+                </button>
+                <button class="btn-kite btn-kite-danger" id="d-btn-delete">
+                    Delete from Portfolio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Stock Modal -->
     <div class="modal-overlay" id="stock-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Add Stock to Portfolio</h3>
-                <button class="btn-icon" id="btn-close-modal">✕</button>
+        <div class="modal-box">
+            <div class="modal-title">
+                <span id="stock-modal-title">Add Holding</span>
+                <button class="icon-btn" id="btn-close-stock-modal" style="width: 24px; height: 24px;">✕</button>
             </div>
             <form id="stock-form">
-                <input type="hidden" id="stock-id">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="form-symbol">Symbol *</label>
-                            <input type="text" id="form-symbol" class="form-input" placeholder="e.g. RELIANCE" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form-name">Company Name</label>
-                            <input type="text" id="form-name" class="form-input" placeholder="e.g. Reliance Ind.">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="form-qty">Quantity *</label>
-                            <input type="number" id="form-qty" class="form-input" min="1" step="any" placeholder="10" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form-buy-price">Avg. Buy Price (₹) *</label>
-                            <input type="number" id="form-buy-price" class="form-input" min="0.01" step="any" placeholder="2450.00" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="form-cmp">Current Price / CMP (₹) *</label>
-                            <input type="number" id="form-cmp" class="form-input" min="0.01" step="any" placeholder="2600.00" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form-prev-close">Prev. Close Price (₹)</label>
-                            <input type="number" id="form-prev-close" class="form-input" min="0.01" step="any" placeholder="2580.00">
-                        </div>
-                    </div>
+                <input type="hidden" id="form-stock-id">
+                <div class="form-group">
+                    <label class="form-label" for="inp-symbol">Symbol *</label>
+                    <input type="text" id="inp-symbol" class="form-input" placeholder="e.g. HDFCBANK" required>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btn-save-stock">Save Stock</button>
+                <div class="form-group">
+                    <label class="form-label" for="inp-name">Instrument Name</label>
+                    <input type="text" id="inp-name" class="form-input" placeholder="e.g. HDFC Bank Ltd.">
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Quick Price Update Modal -->
-    <div class="modal-overlay" id="quick-price-modal">
-        <div class="modal-content" style="max-width: 380px;">
-            <div class="modal-header">
-                <h3>Update Price</h3>
-                <button class="btn-icon" id="btn-close-quick-price">✕</button>
-            </div>
-            <form id="quick-price-form">
-                <input type="hidden" id="quick-stock-id">
-                <div class="modal-body">
-                    <p id="quick-stock-label" style="font-weight: 700; color: var(--accent-primary);"></p>
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="quick-cmp">New CMP (₹)</label>
-                        <input type="number" id="quick-cmp" class="form-input" min="0.01" step="any" required>
+                        <label class="form-label" for="inp-qty">Quantity *</label>
+                        <input type="number" id="inp-qty" class="form-input" step="any" min="0.001" placeholder="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inp-avg">Avg. Buy Price (₹) *</label>
+                        <input type="number" id="inp-avg" class="form-input" step="any" min="0.01" placeholder="720.55" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="inp-cmp">LTP / CMP (₹) *</label>
+                        <input type="number" id="inp-cmp" class="form-input" step="any" min="0.01" placeholder="806.60" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inp-prev-close">Prev. Close (₹)</label>
+                        <input type="number" id="inp-prev-close" class="form-input" step="any" min="0.01" placeholder="800.00">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-quick-price">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn-kite btn-kite-secondary" id="btn-cancel-stock-modal">Cancel</button>
+                    <button type="submit" class="btn-kite btn-kite-blue">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notifications Container -->
-    <div class="toast-container" id="toast-container"></div>
+    <!-- Quick LTP Update Modal -->
+    <div class="modal-overlay" id="price-modal">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span id="price-modal-title">Update LTP</span>
+                <button class="icon-btn" id="btn-close-price-modal" style="width: 24px; height: 24px;">✕</button>
+            </div>
+            <form id="price-form">
+                <input type="hidden" id="price-stock-id">
+                <div class="form-group">
+                    <label class="form-label" for="inp-quick-ltp">New Market Price (₹)</label>
+                    <input type="number" id="inp-quick-ltp" class="form-input" step="any" min="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-kite btn-kite-secondary" id="btn-cancel-price-modal">Cancel</button>
+                    <button type="submit" class="btn-kite btn-kite-blue">Update Price</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="kite-toast" id="kite-toast">Toast notification</div>
 
     <script>
-        // Default Indian Equities Seed Data
-        const DEFAULT_HOLDINGS = [
+        // Exact user holdings initialized
+        const INITIAL_HOLDINGS = [
             {
-                id: 'stock-1',
-                symbol: 'RELIANCE',
-                name: 'Reliance Industries Ltd.',
-                qty: 25,
-                buyPrice: 2750.00,
-                cmp: 2980.50,
-                prevClose: 2940.00
-            },
-            {
-                id: 'stock-2',
-                symbol: 'TCS',
-                name: 'Tata Consultancy Services',
-                qty: 15,
-                buyPrice: 3820.00,
-                cmp: 4125.00,
-                prevClose: 4160.00
-            },
-            {
-                id: 'stock-3',
+                id: 'hold-1',
                 symbol: 'HDFCBANK',
-                name: 'HDFC Bank Limited',
-                qty: 60,
-                buyPrice: 1640.00,
-                cmp: 1720.80,
-                prevClose: 1705.00
+                name: 'HDFC Bank Ltd.',
+                qty: 1,
+                buyPrice: 720.55,
+                cmp: 806.60,
+                prevClose: 806.60
             },
             {
-                id: 'stock-4',
-                symbol: 'INFY',
-                name: 'Infosys Limited',
-                qty: 40,
-                buyPrice: 1520.00,
-                cmp: 1485.20,
-                prevClose: 1495.00
+                id: 'hold-2',
+                symbol: 'NIFTYBEES',
+                name: 'Nippon India ETF Nifty BeES',
+                qty: 1,
+                buyPrice: 272.52,
+                cmp: 286.46,
+                prevClose: 286.46
             },
             {
-                id: 'stock-5',
-                symbol: 'TATAMOTORS',
-                name: 'Tata Motors Ltd.',
-                qty: 80,
-                buyPrice: 780.00,
-                cmp: 945.60,
-                prevClose: 932.00
+                id: 'hold-3',
+                symbol: 'ONGC',
+                name: 'Oil & Natural Gas Corp Ltd.',
+                qty: 1,
+                buyPrice: 234.19,
+                cmp: 235.00,
+                prevClose: 235.00
             }
         ];
 
-        const STORAGE_KEY = 'stockfolio_holdings_v1';
+        // Storage key v2 for updated holdings
+        const STORAGE_KEY = 'zerodha_kite_holdings_v2';
         let holdings = [];
-        let currentSort = { column: 'totalPnl', asc: false };
+        let selectedHoldingId = null;
+        let activeFilter = 'all';
 
-        // Helper: Format INR Currency
-        function formatINR(val, includeSymbol = true) {
+        // Palette for Kite donut slices
+        const SLICE_COLORS = [
+            '#387ed1', // Kite blue
+            '#00b386', // Emerald
+            '#ff9f43', // Amber / Orange
+            '#9c27b0', // Purple
+            '#29b6f6', // Light blue
+            '#f06292', // Pink
+            '#ffd54f'  // Yellow
+        ];
+
+        function toast(msg) {
+            const el = document.getElementById('kite-toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2400);
+        }
+
+        function formatINR(val, prefix = true) {
             const num = Number(val) || 0;
             const sign = num < 0 ? '-' : '';
             const abs = Math.abs(num);
-            const formatted = abs.toLocaleString('en-IN', {
+            const str = abs.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-            return (sign ? '- ' : '') + (includeSymbol ? '₹' : '') + formatted;
+            return (sign ? '-' : '') + (prefix ? '₹' : '') + str;
         }
 
-        // Helper: Format Percentage
         function formatPct(val) {
             const num = Number(val) || 0;
             const sign = num >= 0 ? '+' : '';
             return `${sign}${num.toFixed(2)}%`;
         }
 
-        // Show Toast
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<span>⚡</span> <span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                if (toast.parentNode) toast.remove();
-            }, 3000);
-        }
-
-        // Persistence
-        function loadHoldings() {
+        function loadData() {
             try {
-                const data = localStorage.getItem(STORAGE_KEY);
-                if (data) {
-                    holdings = JSON.parse(data);
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    holdings = JSON.parse(raw);
                 } else {
-                    holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
-                    saveHoldings();
+                    holdings = JSON.parse(JSON.stringify(INITIAL_HOLDINGS));
+                    saveData();
                 }
             } catch (e) {
-                holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
+                holdings = JSON.parse(JSON.stringify(INITIAL_HOLDINGS));
             }
         }
 
-        function saveHoldings() {
+        function saveData() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(holdings));
-            renderDashboard();
+            renderAll();
         }
 
-        // Calculation Helpers
-        function getStockMetrics(stock) {
+        function getMetrics(stock) {
             const qty = Number(stock.qty) || 0;
-            const buyPrice = Number(stock.buyPrice) || 0;
+            const avg = Number(stock.buyPrice) || 0;
             const cmp = Number(stock.cmp) || 0;
-            const prevClose = Number(stock.prevClose) || buyPrice;
+            const prev = Number(stock.prevClose) || cmp;
 
-            const invested = qty * buyPrice;
-            const currentVal = qty * cmp;
-            const totalPnl = currentVal - invested;
+            const invested = qty * avg;
+            const curVal = qty * cmp;
+            const totalPnl = curVal - invested;
             const totalPnlPct = invested > 0 ? (totalPnl / invested) * 100 : 0;
-
-            const dayPnl = qty * (cmp - prevClose);
-            const dayPnlPct = prevClose > 0 ? ((cmp - prevClose) / prevClose) * 100 : 0;
+            const dayPnl = qty * (cmp - prev);
+            const dayPnlPct = prev > 0 ? ((cmp - prev) / prev) * 100 : 0;
 
             return {
                 invested,
-                currentVal,
+                curVal,
                 totalPnl,
                 totalPnlPct,
                 dayPnl,
@@ -935,177 +1116,218 @@
             };
         }
 
-        // Render Summary & Table
-        function renderDashboard() {
+        function renderAll() {
+            renderSummary();
+            renderDonutChart();
+            renderList();
+        }
+
+        function renderSummary() {
             let totalInvested = 0;
             let totalCurrent = 0;
             let totalDayPnl = 0;
 
-            holdings.forEach(stock => {
-                const m = getStockMetrics(stock);
+            holdings.forEach(s => {
+                const m = getMetrics(s);
                 totalInvested += m.invested;
-                totalCurrent += m.currentVal;
+                totalCurrent += m.curVal;
                 totalDayPnl += m.dayPnl;
             });
 
-            const overallPnl = totalCurrent - totalInvested;
-            const overallPnlPct = totalInvested > 0 ? (overallPnl / totalInvested) * 100 : 0;
-            const todayPnlPct = (totalCurrent - totalDayPnl) > 0 ? (totalDayPnl / (totalCurrent - totalDayPnl)) * 100 : 0;
+            const totalPnl = totalCurrent - totalInvested;
+            const totalPnlPct = totalInvested > 0 ? (totalPnl / totalInvested) * 100 : 0;
+            const prevVal = totalCurrent - totalDayPnl;
+            const todayPnlPct = prevVal > 0 ? (totalDayPnl / prevVal) * 100 : 0;
 
-            // Update Top Summary Cards
-            document.getElementById('total-current-val').textContent = formatINR(totalCurrent);
-            document.getElementById('holdings-count').textContent = `${holdings.length} Holding${holdings.length === 1 ? '' : 's'}`;
-
-            document.getElementById('total-invested-val').textContent = formatINR(totalInvested);
+            document.getElementById('header-count').textContent = `(${holdings.length})`;
+            document.getElementById('sum-invested').textContent = formatINR(totalInvested);
+            document.getElementById('sum-current').textContent = formatINR(totalCurrent);
 
             // Total P&L
-            const totalPnlEl = document.getElementById('total-pnl-val');
-            const totalPnlBadge = document.getElementById('badge-total-pnl-pct');
-            const cardTotalPnl = document.getElementById('card-total-pnl');
-            totalPnlEl.textContent = (overallPnl >= 0 ? '+' : '') + formatINR(overallPnl);
-            totalPnlBadge.textContent = formatPct(overallPnlPct);
-
-            if (overallPnl >= 0) {
-                totalPnlEl.className = 'card-value mono text-profit';
-                totalPnlBadge.className = 'badge badge-profit mono';
-                cardTotalPnl.style.setProperty('--card-accent', 'var(--profit)');
-            } else {
-                totalPnlEl.className = 'card-value mono text-loss';
-                totalPnlBadge.className = 'badge badge-loss mono';
-                cardTotalPnl.style.setProperty('--card-accent', 'var(--loss)');
-            }
+            const pnlEl = document.getElementById('sum-total-pnl');
+            const sign = totalPnl >= 0 ? '+' : '';
+            pnlEl.textContent = `${sign}${formatINR(totalPnl, false)} (${formatPct(totalPnlPct)})`;
+            pnlEl.className = `pnl-amount ${totalPnl >= 0 ? 'green' : 'red'}`;
 
             // Today's P&L
-            const todayPnlEl = document.getElementById('today-pnl-val');
-            const todayPnlBadge = document.getElementById('badge-today-pnl-pct');
-            const cardTodayPnl = document.getElementById('card-today-pnl');
-            todayPnlEl.textContent = (totalDayPnl >= 0 ? '+' : '') + formatINR(totalDayPnl);
-            todayPnlBadge.textContent = formatPct(todayPnlPct);
-
-            if (totalDayPnl >= 0) {
-                todayPnlEl.className = 'card-value mono text-profit';
-                todayPnlBadge.className = 'badge badge-profit mono';
-                cardTodayPnl.style.setProperty('--card-accent', 'var(--profit)');
-            } else {
-                todayPnlEl.className = 'card-value mono text-loss';
-                todayPnlBadge.className = 'badge badge-loss mono';
-                cardTodayPnl.style.setProperty('--card-accent', 'var(--loss)');
-            }
-
-            // Render Table
-            renderTable();
+            const todayEl = document.getElementById('sum-today-pnl');
+            const tSign = totalDayPnl >= 0 ? '+' : '';
+            todayEl.textContent = `${tSign}${formatINR(totalDayPnl, false)} (${formatPct(todayPnlPct)})`;
+            todayEl.className = `pnl-today ${totalDayPnl >= 0 ? 'green' : 'red'}`;
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('holdings-tbody');
-            const emptyState = document.getElementById('empty-state');
-            const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+        // SVG Donut Chart
+        function renderDonutChart() {
+            const svg = document.getElementById('donut-svg');
+            const legend = document.getElementById('chart-legend');
+            svg.innerHTML = '';
+            legend.innerHTML = '';
 
-            let filtered = holdings.filter(s => 
-                s.symbol.toLowerCase().includes(searchQuery) || 
-                (s.name && s.name.toLowerCase().includes(searchQuery))
-            );
+            let totalVal = 0;
+            holdings.forEach(s => totalVal += getMetrics(s).curVal);
 
-            // Sort
-            filtered.sort((a, b) => {
-                const ma = getStockMetrics(a);
-                const mb = getStockMetrics(b);
-                let valA, valB;
-
-                switch (currentSort.column) {
-                    case 'symbol':
-                        valA = a.symbol;
-                        valB = b.symbol;
-                        break;
-                    case 'qty':
-                        valA = Number(a.qty);
-                        valB = Number(b.qty);
-                        break;
-                    case 'avgPrice':
-                        valA = Number(a.buyPrice);
-                        valB = Number(b.buyPrice);
-                        break;
-                    case 'cmp':
-                        valA = Number(a.cmp);
-                        valB = Number(b.cmp);
-                        break;
-                    case 'invested':
-                        valA = ma.invested;
-                        valB = mb.invested;
-                        break;
-                    case 'currentVal':
-                        valA = ma.currentVal;
-                        valB = mb.currentVal;
-                        break;
-                    case 'todayPnl':
-                        valA = ma.dayPnl;
-                        valB = mb.dayPnl;
-                        break;
-                    case 'totalPnl':
-                    default:
-                        valA = ma.totalPnl;
-                        valB = mb.totalPnl;
-                        break;
-                }
-
-                if (typeof valA === 'string') {
-                    return currentSort.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }
-                return currentSort.asc ? valA - valB : valB - valA;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.style.display = 'block';
+            if (totalVal <= 0 || holdings.length === 0) {
+                document.getElementById('donut-center-name').textContent = 'EMPTY';
+                document.getElementById('donut-center-val').textContent = '₹0.00';
+                document.getElementById('donut-center-pct').textContent = '0%';
                 return;
             }
 
-            emptyState.style.display = 'none';
-            tbody.innerHTML = filtered.map(stock => {
-                const m = getStockMetrics(stock);
-                const isTotalProfit = m.totalPnl >= 0;
-                const isDayProfit = m.dayPnl >= 0;
+            // Set default center text
+            resetCenterInfo(totalVal);
+
+            const cx = 85;
+            const cy = 85;
+            const radius = 62;
+            const circumference = 2 * Math.PI * radius;
+            let currentOffset = 0;
+
+            holdings.forEach((stock, idx) => {
+                const m = getMetrics(stock);
+                const weight = m.curVal / totalVal;
+                const strokeDash = weight * circumference;
+                const strokeGap = circumference - strokeDash;
+                const color = SLICE_COLORS[idx % SLICE_COLORS.length];
+
+                // Create SVG Circle Segment
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                circle.setAttribute('r', radius);
+                circle.setAttribute('fill', 'transparent');
+                circle.setAttribute('stroke', color);
+                circle.setAttribute('stroke-width', '18');
+                circle.setAttribute('stroke-dasharray', `${strokeDash} ${strokeGap}`);
+                circle.setAttribute('stroke-dashoffset', -currentOffset);
+                circle.setAttribute('class', 'donut-segment');
+                circle.setAttribute('data-id', stock.id);
+
+                // Interactions
+                circle.addEventListener('mouseenter', () => highlightSlice(stock, weight, m.curVal, color));
+                circle.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    highlightSlice(stock, weight, m.curVal, color);
+                });
+                circle.addEventListener('click', () => openDrawer(stock.id));
+
+                svg.appendChild(circle);
+
+                // Legend Item
+                const leg = document.createElement('div');
+                leg.className = 'legend-item';
+                leg.setAttribute('data-id', stock.id);
+                leg.innerHTML = `
+                    <div class="legend-left">
+                        <span class="legend-dot" style="background: ${color};"></span>
+                        <span class="legend-symbol">${escapeHTML(stock.symbol)}</span>
+                    </div>
+                    <div class="legend-right">
+                        <span class="legend-pct">${(weight * 100).toFixed(1)}%</span>
+                        <span class="legend-amt">${formatINR(m.curVal)}</span>
+                    </div>
+                `;
+
+                leg.addEventListener('mouseenter', () => highlightSlice(stock, weight, m.curVal, color));
+                leg.addEventListener('mouseleave', () => resetCenterInfo(totalVal));
+                leg.addEventListener('click', () => openDrawer(stock.id));
+
+                legend.appendChild(leg);
+
+                currentOffset += strokeDash;
+            });
+
+            svg.addEventListener('mouseleave', () => resetCenterInfo(totalVal));
+        }
+
+        function highlightSlice(stock, weight, curVal, color) {
+            document.getElementById('donut-center-name').textContent = stock.symbol;
+            document.getElementById('donut-center-val').textContent = formatINR(curVal);
+            const pctEl = document.getElementById('donut-center-pct');
+            pctEl.textContent = `${(weight * 100).toFixed(1)}%`;
+            pctEl.style.color = color;
+
+            // Highlight corresponding segment and legend
+            document.querySelectorAll('.donut-segment').forEach(s => {
+                if (s.getAttribute('data-id') === stock.id) {
+                    s.classList.add('active-segment');
+                } else {
+                    s.classList.remove('active-segment');
+                    s.style.opacity = '0.35';
+                }
+            });
+
+            document.querySelectorAll('.legend-item').forEach(l => {
+                if (l.getAttribute('data-id') === stock.id) {
+                    l.classList.add('active-legend');
+                } else {
+                    l.classList.remove('active-legend');
+                }
+            });
+        }
+
+        function resetCenterInfo(totalVal) {
+            document.getElementById('donut-center-name').textContent = 'PORTFOLIO';
+            document.getElementById('donut-center-val').textContent = formatINR(totalVal);
+            const pctEl = document.getElementById('donut-center-pct');
+            pctEl.textContent = '100%';
+            pctEl.style.color = 'var(--kite-blue)';
+
+            document.querySelectorAll('.donut-segment').forEach(s => {
+                s.classList.remove('active-segment');
+                s.style.opacity = '1';
+            });
+            document.querySelectorAll('.legend-item').forEach(l => {
+                l.classList.remove('active-legend');
+            });
+        }
+
+        // Render Kite Holdings List
+        function renderList() {
+            const container = document.getElementById('holdings-container');
+            const search = document.getElementById('search-input').value.trim().toLowerCase();
+
+            let filtered = holdings.filter(s => {
+                const matchesSearch = s.symbol.toLowerCase().includes(search) || 
+                                     (s.name && s.name.toLowerCase().includes(search));
+                if (!matchesSearch) return false;
+                const m = getMetrics(s);
+                if (activeFilter === 'profit') return m.totalPnl >= 0;
+                if (activeFilter === 'loss') return m.totalPnl < 0;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 40px 16px; text-align: center; color: var(--kite-text-dim);">
+                        <p style="font-size: 13px;">No holdings found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(stock => {
+                const m = getMetrics(stock);
+                const isProfit = m.totalPnl >= 0;
+                const sign = isProfit ? '+' : '';
 
                 return `
-                    <tr>
-                        <td>
-                            <div class="stock-info">
-                                <span class="stock-symbol">${escapeHTML(stock.symbol)}</span>
-                                <span class="stock-name">${escapeHTML(stock.name || stock.symbol)}</span>
-                            </div>
-                        </td>
-                        <td class="text-right mono">${stock.qty}</td>
-                        <td class="text-right mono">${formatINR(stock.buyPrice)}</td>
-                        <td class="text-right mono">${formatINR(m.invested)}</td>
-                        <td class="text-right mono">
-                            <span style="cursor: pointer; text-decoration: underline dotted var(--accent-primary);" onclick="openQuickPriceModal('${stock.id}')" title="Click to update price">
-                                ${formatINR(stock.cmp)} ✎
+                    <div class="holding-item" onclick="openDrawer('${stock.id}')">
+                        <div class="holding-row-top">
+                            <span class="qty-avg">Qty. <strong>${stock.qty}</strong> • Avg. <strong>${Number(stock.buyPrice).toFixed(2)}</strong></span>
+                            <span class="item-pnl ${isProfit ? 'green' : 'red'}">
+                                ${sign}${Number(m.totalPnl).toFixed(2)} (${formatPct(m.totalPnlPct)})
                             </span>
-                        </td>
-                        <td class="text-right mono" style="font-weight: 600;">${formatINR(m.currentVal)}</td>
-                        <td class="text-right mono ${isDayProfit ? 'text-profit' : 'text-loss'}">
-                            <div>${isDayProfit ? '+' : ''}${formatINR(m.dayPnl)}</div>
-                            <small class="badge ${isDayProfit ? 'badge-profit' : 'badge-loss'}">${formatPct(m.dayPnlPct)}</small>
-                        </td>
-                        <td class="text-right mono ${isTotalProfit ? 'text-profit' : 'text-loss'}">
-                            <div style="font-weight: 700;">${isTotalProfit ? '+' : ''}${formatINR(m.totalPnl)}</div>
-                            <small class="badge ${isTotalProfit ? 'badge-profit' : 'badge-loss'}">${formatPct(m.totalPnlPct)}</small>
-                        </td>
-                        <td class="text-right">
-                            <div style="display: inline-flex; gap: 6px;">
-                                <button class="btn-icon" onclick="openEditModal('${stock.id}')" title="Edit Stock Details">
-                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                </button>
-                                <button class="btn-icon btn-danger" onclick="deleteStock('${stock.id}')" title="Delete Stock">
-                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
+                        </div>
+                        <div class="holding-row-bottom">
+                            <div class="symbol-badge">
+                                <span class="stock-sym">${escapeHTML(stock.symbol)}</span>
+                                <span class="kite-tag">CNC</span>
                             </div>
-                        </td>
-                    </tr>
+                            <div class="ltp-curval">
+                                LTP <strong>${Number(stock.cmp).toFixed(2)}</strong> (Cur. ${formatINR(m.curVal, false)})
+                            </div>
+                        </div>
+                    </div>
                 `;
             }).join('');
         }
@@ -1116,169 +1338,192 @@
             );
         }
 
-        // Modal Handlers
-        const stockModal = document.getElementById('stock-modal');
-        const stockForm = document.getElementById('stock-form');
-        const modalTitle = document.getElementById('modal-title');
+        // Action Drawer
+        window.openDrawer = function(id) {
+            const stock = holdings.find(s => s.id === id);
+            if (!stock) return;
+            selectedHoldingId = id;
 
-        document.getElementById('btn-open-add-modal').addEventListener('click', () => {
-            stockForm.reset();
-            document.getElementById('stock-id').value = '';
-            modalTitle.textContent = 'Add Stock to Portfolio';
-            stockModal.classList.add('active');
-            document.getElementById('form-symbol').focus();
-        });
+            const m = getMetrics(stock);
+            const isProfit = m.totalPnl >= 0;
+            const sign = isProfit ? '+' : '';
 
-        function closeModal() {
-            stockModal.classList.remove('active');
+            document.getElementById('d-symbol').textContent = stock.symbol;
+            document.getElementById('d-name').textContent = `${stock.name || stock.symbol} • NSE (CNC)`;
+            document.getElementById('d-qty').textContent = stock.qty;
+            document.getElementById('d-avg').textContent = formatINR(stock.buyPrice);
+            document.getElementById('d-invested').textContent = formatINR(m.invested);
+            document.getElementById('d-curval').textContent = formatINR(m.curVal);
+            document.getElementById('d-ltp').textContent = formatINR(stock.cmp);
+
+            const pnlEl = document.getElementById('d-pnl');
+            pnlEl.textContent = `${sign}${formatINR(m.totalPnl, false)} (${formatPct(m.totalPnlPct)})`;
+            pnlEl.className = `d-val ${isProfit ? 'green' : 'red'}`;
+
+            document.getElementById('drawer-overlay').classList.add('active');
+        };
+
+        function closeDrawer() {
+            document.getElementById('drawer-overlay').classList.remove('active');
         }
 
-        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-        document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+        document.getElementById('d-close').addEventListener('click', closeDrawer);
+        document.getElementById('drawer-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('drawer-overlay')) closeDrawer();
+        });
 
-        stockForm.addEventListener('submit', (e) => {
+        // LTP Quick Update
+        document.getElementById('d-btn-update-price').addEventListener('click', () => {
+            const stock = holdings.find(s => s.id === selectedHoldingId);
+            if (!stock) return;
+            closeDrawer();
+            document.getElementById('price-stock-id').value = stock.id;
+            document.getElementById('price-modal-title').textContent = `Update LTP • ${stock.symbol}`;
+            document.getElementById('inp-quick-ltp').value = stock.cmp;
+            document.getElementById('price-modal').classList.add('active');
+            setTimeout(() => document.getElementById('inp-quick-ltp').focus(), 150);
+        });
+
+        document.getElementById('btn-close-price-modal').addEventListener('click', () => {
+            document.getElementById('price-modal').classList.remove('active');
+        });
+        document.getElementById('btn-cancel-price-modal').addEventListener('click', () => {
+            document.getElementById('price-modal').classList.remove('active');
+        });
+
+        document.getElementById('price-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const id = document.getElementById('stock-id').value || 'stock-' + Date.now();
-            const symbol = document.getElementById('form-symbol').value.trim().toUpperCase();
-            const name = document.getElementById('form-name').value.trim() || symbol;
-            const qty = parseFloat(document.getElementById('form-qty').value);
-            const buyPrice = parseFloat(document.getElementById('form-buy-price').value);
-            const cmp = parseFloat(document.getElementById('form-cmp').value);
-            const prevClose = parseFloat(document.getElementById('form-prev-close').value) || cmp;
+            const id = document.getElementById('price-stock-id').value;
+            const newPrice = parseFloat(document.getElementById('inp-quick-ltp').value);
+            const stock = holdings.find(s => s.id === id);
+            if (stock && !isNaN(newPrice) && newPrice > 0) {
+                stock.cmp = newPrice;
+                saveData();
+                toast(`Updated ${stock.symbol} LTP to ₹${newPrice.toFixed(2)}`);
+            }
+            document.getElementById('price-modal').classList.remove('active');
+        });
 
-            const existingIndex = holdings.findIndex(s => s.id === id);
-            const newStock = { id, symbol, name, qty, buyPrice, cmp, prevClose };
+        // Edit Holding
+        document.getElementById('d-btn-edit').addEventListener('click', () => {
+            const stock = holdings.find(s => s.id === selectedHoldingId);
+            if (!stock) return;
+            closeDrawer();
 
-            if (existingIndex >= 0) {
-                holdings[existingIndex] = newStock;
-                showToast(`Updated ${symbol}`);
+            document.getElementById('form-stock-id').value = stock.id;
+            document.getElementById('stock-modal-title').textContent = `Edit Holding • ${stock.symbol}`;
+            document.getElementById('inp-symbol').value = stock.symbol;
+            document.getElementById('inp-name').value = stock.name || '';
+            document.getElementById('inp-qty').value = stock.qty;
+            document.getElementById('inp-avg').value = stock.buyPrice;
+            document.getElementById('inp-cmp').value = stock.cmp;
+            document.getElementById('inp-prev-close').value = stock.prevClose || stock.cmp;
+
+            document.getElementById('stock-modal').classList.add('active');
+        });
+
+        // Delete Holding
+        document.getElementById('d-btn-delete').addEventListener('click', () => {
+            const stock = holdings.find(s => s.id === selectedHoldingId);
+            if (!stock) return;
+            if (confirm(`Remove ${stock.symbol} from portfolio?`)) {
+                holdings = holdings.filter(s => s.id !== selectedHoldingId);
+                saveData();
+                closeDrawer();
+                toast(`Removed ${stock.symbol}`);
+            }
+        });
+
+        // Add Stock Modal
+        document.getElementById('btn-open-add').addEventListener('click', () => {
+            document.getElementById('stock-form').reset();
+            document.getElementById('form-stock-id').value = '';
+            document.getElementById('stock-modal-title').textContent = 'Add Holding';
+            document.getElementById('stock-modal').classList.add('active');
+            setTimeout(() => document.getElementById('inp-symbol').focus(), 150);
+        });
+
+        function closeStockModal() {
+            document.getElementById('stock-modal').classList.remove('active');
+        }
+
+        document.getElementById('btn-close-stock-modal').addEventListener('click', closeStockModal);
+        document.getElementById('btn-cancel-stock-modal').addEventListener('click', closeStockModal);
+
+        document.getElementById('stock-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('form-stock-id').value || 'hold-' + Date.now();
+            const symbol = document.getElementById('inp-symbol').value.trim().toUpperCase();
+            const name = document.getElementById('inp-name').value.trim() || symbol;
+            const qty = parseFloat(document.getElementById('inp-qty').value);
+            const buyPrice = parseFloat(document.getElementById('inp-avg').value);
+            const cmp = parseFloat(document.getElementById('inp-cmp').value);
+            const prevClose = parseFloat(document.getElementById('inp-prev-close').value) || cmp;
+
+            const existingIdx = holdings.findIndex(s => s.id === id);
+            const item = { id, symbol, name, qty, buyPrice, cmp, prevClose };
+
+            if (existingIdx >= 0) {
+                holdings[existingIdx] = item;
+                toast(`Updated ${symbol}`);
             } else {
-                holdings.unshift(newStock);
-                showToast(`Added ${symbol} to portfolio`);
+                holdings.unshift(item);
+                toast(`Added ${symbol}`);
             }
 
-            saveHoldings();
-            closeModal();
+            saveData();
+            closeStockModal();
         });
 
-        window.openEditModal = function(id) {
-            const stock = holdings.find(s => s.id === id);
-            if (!stock) return;
-
-            document.getElementById('stock-id').value = stock.id;
-            document.getElementById('form-symbol').value = stock.symbol;
-            document.getElementById('form-name').value = stock.name || '';
-            document.getElementById('form-qty').value = stock.qty;
-            document.getElementById('form-buy-price').value = stock.buyPrice;
-            document.getElementById('form-cmp').value = stock.cmp;
-            document.getElementById('form-prev-close').value = stock.prevClose || stock.cmp;
-
-            modalTitle.textContent = `Edit ${stock.symbol}`;
-            stockModal.classList.add('active');
-        };
-
-        window.deleteStock = function(id) {
-            const stock = holdings.find(s => s.id === id);
-            if (!stock) return;
-            if (confirm(`Are you sure you want to delete ${stock.symbol} from your portfolio?`)) {
-                holdings = holdings.filter(s => s.id !== id);
-                saveHoldings();
-                showToast(`Removed ${stock.symbol}`);
-            }
-        };
-
-        // Quick Price Modal
-        const quickPriceModal = document.getElementById('quick-price-modal');
-        const quickPriceForm = document.getElementById('quick-price-form');
-
-        window.openQuickPriceModal = function(id) {
-            const stock = holdings.find(s => s.id === id);
-            if (!stock) return;
-            document.getElementById('quick-stock-id').value = stock.id;
-            document.getElementById('quick-stock-label').textContent = `${stock.symbol} (${stock.name || ''})`;
-            document.getElementById('quick-cmp').value = stock.cmp;
-            quickPriceModal.classList.add('active');
-            document.getElementById('quick-cmp').focus();
-        };
-
-        function closeQuickPriceModal() {
-            quickPriceModal.classList.remove('active');
-        }
-
-        document.getElementById('btn-close-quick-price').addEventListener('click', closeQuickPriceModal);
-        document.getElementById('btn-cancel-quick-price').addEventListener('click', closeQuickPriceModal);
-
-        quickPriceForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('quick-stock-id').value;
-            const newCmp = parseFloat(document.getElementById('quick-cmp').value);
-            const stock = holdings.find(s => s.id === id);
-            if (stock && !isNaN(newCmp) && newCmp > 0) {
-                stock.cmp = newCmp;
-                saveHoldings();
-                showToast(`Updated price for ${stock.symbol}`);
-            }
-            closeQuickPriceModal();
-        });
-
-        // Market Movement Simulator (fluctuates CMP by ±0.4% to ±1.8%)
-        document.getElementById('btn-simulate').addEventListener('click', () => {
+        // Market Sim Button (random ±0.3% to ±1.5% fluctuation)
+        document.getElementById('btn-refresh-sim').addEventListener('click', () => {
             if (holdings.length === 0) return;
             holdings.forEach(stock => {
-                const deltaPct = (Math.random() * 3 - 1.4) / 100; // -1.4% to +1.6%
-                const newPrice = stock.cmp * (1 + deltaPct);
-                stock.cmp = parseFloat(newPrice.toFixed(2));
+                const delta = (Math.random() * 2.4 - 1.1) / 100;
+                stock.cmp = parseFloat((stock.cmp * (1 + delta)).toFixed(2));
             });
-            saveHoldings();
-            showToast('Simulated real-time market price movements!');
+            saveData();
+            toast('Simulated market tick update');
         });
 
-        // Reset Demo Data
-        document.getElementById('btn-reset-demo').addEventListener('click', () => {
-            if (confirm('Reset portfolio back to default sample holdings?')) {
-                holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
-                saveHoldings();
-                showToast('Reset to demo holdings');
+        // Toggle Chart View
+        const chartBtn = document.getElementById('btn-toggle-chart');
+        const chartSec = document.getElementById('chart-section');
+        chartBtn.addEventListener('click', () => {
+            if (chartSec.style.display === 'none') {
+                chartSec.style.display = 'block';
+                chartBtn.classList.remove('active');
+            } else {
+                chartSec.style.display = 'none';
+                chartBtn.classList.add('active');
             }
         });
 
-        // Search Filter
-        document.getElementById('search-input').addEventListener('input', renderTable);
+        // Search Input
+        document.getElementById('search-input').addEventListener('input', renderList);
 
-        // Sorting
-        document.querySelectorAll('th.sortable').forEach(th => {
-            th.addEventListener('click', () => {
-                const col = th.dataset.sort;
-                if (currentSort.column === col) {
-                    currentSort.asc = !currentSort.asc;
-                } else {
-                    currentSort.column = col;
-                    currentSort.asc = true;
-                }
-                renderTable();
+        // Filter Tags
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                activeFilter = tag.dataset.filter;
+                renderList();
             });
         });
 
-        // Close modals on overlay click
-        [stockModal, quickPriceModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        // Keyboard Shortcuts: Escape to close modals
+        // Escape key closes overlays
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeModal();
-                closeQuickPriceModal();
+                closeDrawer();
+                closeStockModal();
+                document.getElementById('price-modal').classList.remove('active');
             }
         });
 
         // Init
-        loadHoldings();
-        renderDashboard();
+        loadData();
+        renderAll();
     </script>
 </body>
 </html>
