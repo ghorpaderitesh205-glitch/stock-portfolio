@@ -1455,63 +1455,81 @@
         // ==========================================
         // Yahoo Finance Live Price Fetching & Proxies
         // ==========================================
-        async function fetchStockQuote(symbol, exchange) {
+        async function fetchLiveQuote(symbol, exchange) {
             const ex = (exchange || 'NSE').toUpperCase();
             const suffix = ex === 'BSE' ? '.BO' : '.NS';
             const fullTicker = `${symbol.trim().toUpperCase()}${suffix}`;
-            const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(fullTicker)}?interval=1d`;
 
-            // List of CORS proxies to try with fallback
-            const proxyUrls = [
-                // 1. AllOrigins (returns JSON wrapper with .contents)
-                `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
-                // 2. AllOrigins raw
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-                // 3. Codetabs proxy
-                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
-                // 4. Direct fetch (works in browser environments with CORS extension / native webviews)
-                targetUrl
+            // Primary and backup Yahoo Finance hosts
+            const hosts = [
+                'https://query1.finance.yahoo.com',
+                'https://query2.finance.yahoo.com',
+                'https://finance.yahoo.com'
             ];
 
             let lastError = null;
 
-            for (const pUrl of proxyUrls) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 7000); // 7s timeout per proxy
+            for (const host of hosts) {
+                const targetUrl = `${host}/v8/finance/chart/${encodeURIComponent(fullTicker)}?interval=1d`;
 
-                    const res = await fetch(pUrl, { signal: controller.signal });
-                    clearTimeout(timeoutId);
+                // Prioritized CORS proxy list with corsproxy.io and thingproxy at the top
+                const proxyUrls = [
+                    // 1. corsproxy.io (primary high-speed proxy)
+                    `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+                    `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
+                    // 2. thingproxy.freeboard.io
+                    `https://thingproxy.freeboard.io/fetch/${targetUrl}`,
+                    // 3. allorigins.win (JSON wrapper)
+                    `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+                    // 4. allorigins.win raw
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+                    // 5. codetabs proxy
+                    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+                    // 6. Direct fetch (for CORS-enabled environments / webviews)
+                    targetUrl
+                ];
 
-                    if (!res.ok) continue;
+                for (const pUrl of proxyUrls) {
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8000ms timeout
 
-                    let data = await res.json();
-                    // Handle allorigins get wrapper
-                    if (data && typeof data.contents === 'string') {
-                        try {
-                            data = JSON.parse(data.contents);
-                        } catch (e) {
-                            continue;
+                        const res = await fetch(pUrl, { 
+                            signal: controller.signal,
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        clearTimeout(timeoutId);
+
+                        if (!res.ok) continue;
+
+                        let data = await res.json();
+                        // Handle allorigins get wrapper
+                        if (data && typeof data.contents === 'string') {
+                            try {
+                                data = JSON.parse(data.contents);
+                            } catch (e) {
+                                continue;
+                            }
                         }
-                    }
 
-                    const meta = data?.chart?.result?.[0]?.meta;
-                    if (meta && typeof meta.regularMarketPrice === 'number') {
-                        const price = meta.regularMarketPrice;
-                        const prevClose = typeof meta.chartPreviousClose === 'number' 
-                            ? meta.chartPreviousClose 
-                            : (typeof meta.previousClose === 'number' ? meta.previousClose : price);
+                        const meta = data?.chart?.result?.[0]?.meta;
+                        if (meta && typeof meta.regularMarketPrice === 'number') {
+                            const price = meta.regularMarketPrice;
+                            const prevClose = typeof meta.chartPreviousClose === 'number' 
+                                ? meta.chartPreviousClose 
+                                : (typeof meta.previousClose === 'number' ? meta.previousClose : price);
 
-                        return {
-                            success: true,
-                            price,
-                            prevClose,
-                            currency: meta.currency || 'INR'
-                        };
+                            return {
+                                success: true,
+                                price,
+                                prevClose,
+                                currency: meta.currency || 'INR'
+                            };
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        // try next proxy
                     }
-                } catch (err) {
-                    lastError = err;
-                    // continue to next proxy
                 }
             }
 
@@ -1520,6 +1538,11 @@
                 error: lastError ? lastError.message : 'Unable to reach quote endpoint'
             };
         }
+
+        // Backward compatibility alias & global exports
+        const fetchStockQuote = fetchLiveQuote;
+        window.fetchLiveQuote = fetchLiveQuote;
+        window.fetchStockQuote = fetchLiveQuote;
 
         async function refreshAllLivePrices() {
             if (isFetchingPrices) return;
@@ -1545,7 +1568,7 @@
             try {
                 // Fetch each holding in parallel with timeout
                 const promises = holdings.map(async (stock) => {
-                    const result = await fetchStockQuote(stock.symbol, stock.exchange);
+                    const result = await fetchLiveQuote(stock.symbol, stock.exchange);
                     if (result.success && result.price > 0) {
                         stock.cmp = parseFloat(result.price.toFixed(2));
                         if (result.prevClose > 0) {
@@ -1625,7 +1648,7 @@
             const stock = holdings.find(s => s.id === selectedHoldingId);
             if (!stock) return;
             toast(`Fetching live quote for ${stock.symbol}...`);
-            const res = await fetchStockQuote(stock.symbol, stock.exchange);
+            const res = await fetchLiveQuote(stock.symbol, stock.exchange);
             if (res.success && res.price > 0) {
                 stock.cmp = parseFloat(res.price.toFixed(2));
                 if (res.prevClose > 0) {

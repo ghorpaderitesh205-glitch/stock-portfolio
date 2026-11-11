@@ -12,7 +12,9 @@ A sleek, mobile-first **Stock Portfolio Tracker** inspired by **Zerodha Kite's**
 
 - 🟢 **Live NSE & BSE Price Fetching**:
   - Fetches the latest `regularMarketPrice` and `previousClose` from Yahoo Finance's quote/chart endpoint (`.NS` for NSE and `.BO` for BSE) with **zero API keys required**.
-  - Multi-tier public CORS proxy fallback (`allorigins.win`, `codetabs`, direct) with automatic per-request timeouts.
+  - Multi-tier public CORS proxy fallback with `corsproxy.io` and `thingproxy.freeboard.io/fetch/` at the top, followed by `allorigins.win`, `codetabs`, and direct fetch.
+  - Automatic backup Yahoo Finance host failover (`query1.finance.yahoo.com` and `query2.finance.yahoo.com`).
+  - Increased 8,000ms per-request timeout with automatic abort controllers.
   - Automatically updates each holding's **LTP**, **Today's P&L**, **Total P&L**, and recalculates the **allocation donut chart**.
   - Gracefully preserves existing prices if offline or if any symbol fails.
   - Shows real-time **Last updated** timestamp and pulsing status indicator.
