@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockFolio | Sleek Indian Stock Portfolio Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #090d16;
+            --bg-secondary: #0f172a;
+            --bg-card: rgba(19, 29, 51, 0.7);
+            --bg-card-hover: rgba(26, 38, 66, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #38bdf8;
+            --accent-indigo: #6366f1;
+            --profit: #10b981;
+            --profit-bg: rgba(16, 185, 129, 0.12);
+            --profit-border: rgba(16, 185, 129, 0.25);
+            --loss: #f43f5e;
+            --loss-bg: rgba(244, 63, 94, 0.12);
+            --loss-border: rgba(244, 63, 94, 0.25);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1240px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .brand-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #f8fafc, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-hover);
+        }
+
+        .btn-icon {
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .btn-icon:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-danger {
+            background: var(--loss-bg);
+            border-color: var(--loss-border);
+            color: var(--loss);
+        }
+
+        .btn-danger:hover {
+            background: var(--loss);
+            color: #fff;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .summary-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent, transparent);
+        }
+
+        .card-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .card-subtext {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .badge-profit {
+            background: var(--profit-bg);
+            color: var(--profit);
+            border: 1px solid var(--profit-border);
+        }
+
+        .badge-loss {
+            background: var(--loss-bg);
+            color: var(--loss);
+            border: 1px solid var(--loss-border);
+        }
+
+        .badge-neutral {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+            max-width: 380px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px 10px 38px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            padding: 14px 18px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th.sortable:hover {
+            color: var(--text-primary);
+        }
+
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .stock-symbol {
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+        }
+
+        .stock-name {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-profit {
+            color: var(--profit);
+        }
+
+        .text-loss {
+            color: var(--loss);
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #111a2e;
+            border: 1px solid var(--border-hover);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .modal-footer {
+            padding: 18px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        /* Quick Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid var(--border-hover);
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 14px;
+            }
+            .card-value {
+                font-size: 1.5rem;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                max-width: none;
+            }
+            .action-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <div class="logo-icon">₹</div>
+                <div class="brand-text">
+                    <h1>StockFolio</h1>
+                    <p>Indian Equities & Portfolio Tracker</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="btn-simulate" title="Simulate small market fluctuations">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Live Sim
+                </button>
+                <button class="btn btn-primary" id="btn-open-add-modal">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Stock
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <!-- Current Value -->
+            <div class="summary-card" style="--card-accent: #38bdf8;">
+                <div class="card-label">
+                    <span>Current Portfolio Value</span>
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="var(--accent-primary)">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <div class="card-value mono" id="total-current-val">₹0.00</div>
+                <div class="card-subtext">
+                    <span class="text-secondary" id="holdings-count">0 Holdings</span>
+                </div>
+            </div>
+
+            <!-- Invested Amount -->
+            <div class="summary-card" style="--card-accent: #6366f1;">
+                <div class="card-label">
+                    <span>Invested Capital</span>
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="var(--accent-indigo)">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="card-value mono" id="total-invested-val">₹0.00</div>
+                <div class="card-subtext">
+                    <span class="text-secondary">Base capital invested</span>
+                </div>
+            </div>
+
+            <!-- Total P&L -->
+            <div class="summary-card" id="card-total-pnl" style="--card-accent: #10b981;">
+                <div class="card-label">
+                    <span>Total Profit / Loss</span>
+                    <span id="badge-total-pnl-pct" class="badge badge-profit mono">+0.00%</span>
+                </div>
+                <div class="card-value mono" id="total-pnl-val">₹0.00</div>
+                <div class="card-subtext">
+                    <span id="total-pnl-desc">Overall portfolio return</span>
+                </div>
+            </div>
+
+            <!-- Today's P&L -->
+            <div class="summary-card" id="card-today-pnl" style="--card-accent: #f59e0b;">
+                <div class="card-label">
+                    <span>Today's Gain / Loss</span>
+                    <span id="badge-today-pnl-pct" class="badge badge-neutral mono">+0.00%</span>
+                </div>
+                <div class="card-value mono" id="today-pnl-val">₹0.00</div>
+                <div class="card-subtext">
+                    <span id="today-pnl-desc">Calculated vs Prev. Close</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls: Search & Filters -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" id="search-input" placeholder="Search symbol or company...">
+            </div>
+            <div class="action-group">
+                <button class="btn btn-secondary" id="btn-reset-demo" title="Restore sample portfolio">
+                    Reset Demo Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Holdings Table -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="symbol">Stock & Symbol ⬍</th>
+                            <th class="text-right sortable" data-sort="qty">Qty ⬍</th>
+                            <th class="text-right sortable" data-sort="avgPrice">Avg. Buy (₹) ⬍</th>
+                            <th class="text-right sortable" data-sort="invested">Invested (₹) ⬍</th>
+                            <th class="text-right sortable" data-sort="cmp">CMP (₹) ⬍</th>
+                            <th class="text-right sortable" data-sort="currentVal">Current (₹) ⬍</th>
+                            <th class="text-right sortable" data-sort="todayPnl">Today's P&L ⬍</th>
+                            <th class="text-right sortable" data-sort="totalPnl">Total P&L ⬍</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="holdings-tbody">
+                        <!-- Injected by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3>No stocks found</h3>
+                <p>Click "Add Stock" or "Reset Demo Data" to get started.</p>
+            </div>
+        </div>
+
+        <footer>
+            StockFolio • Auto-saved to LocalStorage • Sleek Dark Portfolio Dashboard
+        </footer>
+    </div>
+
+    <!-- Add / Edit Stock Modal -->
+    <div class="modal-overlay" id="stock-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Stock to Portfolio</h3>
+                <button class="btn-icon" id="btn-close-modal">✕</button>
+            </div>
+            <form id="stock-form">
+                <input type="hidden" id="stock-id">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="form-symbol">Symbol *</label>
+                            <input type="text" id="form-symbol" class="form-input" placeholder="e.g. RELIANCE" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-name">Company Name</label>
+                            <input type="text" id="form-name" class="form-input" placeholder="e.g. Reliance Ind.">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="form-qty">Quantity *</label>
+                            <input type="number" id="form-qty" class="form-input" min="1" step="any" placeholder="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-buy-price">Avg. Buy Price (₹) *</label>
+                            <input type="number" id="form-buy-price" class="form-input" min="0.01" step="any" placeholder="2450.00" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="form-cmp">Current Price / CMP (₹) *</label>
+                            <input type="number" id="form-cmp" class="form-input" min="0.01" step="any" placeholder="2600.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-prev-close">Prev. Close Price (₹)</label>
+                            <input type="number" id="form-prev-close" class="form-input" min="0.01" step="any" placeholder="2580.00">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-stock">Save Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Price Update Modal -->
+    <div class="modal-overlay" id="quick-price-modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <h3>Update Price</h3>
+                <button class="btn-icon" id="btn-close-quick-price">✕</button>
+            </div>
+            <form id="quick-price-form">
+                <input type="hidden" id="quick-stock-id">
+                <div class="modal-body">
+                    <p id="quick-stock-label" style="font-weight: 700; color: var(--accent-primary);"></p>
+                    <div class="form-group">
+                        <label for="quick-cmp">New CMP (₹)</label>
+                        <input type="number" id="quick-cmp" class="form-input" min="0.01" step="any" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-quick-price">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // Default Indian Equities Seed Data
+        const DEFAULT_HOLDINGS = [
+            {
+                id: 'stock-1',
+                symbol: 'RELIANCE',
+                name: 'Reliance Industries Ltd.',
+                qty: 25,
+                buyPrice: 2750.00,
+                cmp: 2980.50,
+                prevClose: 2940.00
+            },
+            {
+                id: 'stock-2',
+                symbol: 'TCS',
+                name: 'Tata Consultancy Services',
+                qty: 15,
+                buyPrice: 3820.00,
+                cmp: 4125.00,
+                prevClose: 4160.00
+            },
+            {
+                id: 'stock-3',
+                symbol: 'HDFCBANK',
+                name: 'HDFC Bank Limited',
+                qty: 60,
+                buyPrice: 1640.00,
+                cmp: 1720.80,
+                prevClose: 1705.00
+            },
+            {
+                id: 'stock-4',
+                symbol: 'INFY',
+                name: 'Infosys Limited',
+                qty: 40,
+                buyPrice: 1520.00,
+                cmp: 1485.20,
+                prevClose: 1495.00
+            },
+            {
+                id: 'stock-5',
+                symbol: 'TATAMOTORS',
+                name: 'Tata Motors Ltd.',
+                qty: 80,
+                buyPrice: 780.00,
+                cmp: 945.60,
+                prevClose: 932.00
+            }
+        ];
+
+        const STORAGE_KEY = 'stockfolio_holdings_v1';
+        let holdings = [];
+        let currentSort = { column: 'totalPnl', asc: false };
+
+        // Helper: Format INR Currency
+        function formatINR(val, includeSymbol = true) {
+            const num = Number(val) || 0;
+            const sign = num < 0 ? '-' : '';
+            const abs = Math.abs(num);
+            const formatted = abs.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            return (sign ? '- ' : '') + (includeSymbol ? '₹' : '') + formatted;
+        }
+
+        // Helper: Format Percentage
+        function formatPct(val) {
+            const num = Number(val) || 0;
+            const sign = num >= 0 ? '+' : '';
+            return `${sign}${num.toFixed(2)}%`;
+        }
+
+        // Show Toast
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>⚡</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 3000);
+        }
+
+        // Persistence
+        function loadHoldings() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                if (data) {
+                    holdings = JSON.parse(data);
+                } else {
+                    holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
+                    saveHoldings();
+                }
+            } catch (e) {
+                holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
+            }
+        }
+
+        function saveHoldings() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(holdings));
+            renderDashboard();
+        }
+
+        // Calculation Helpers
+        function getStockMetrics(stock) {
+            const qty = Number(stock.qty) || 0;
+            const buyPrice = Number(stock.buyPrice) || 0;
+            const cmp = Number(stock.cmp) || 0;
+            const prevClose = Number(stock.prevClose) || buyPrice;
+
+            const invested = qty * buyPrice;
+            const currentVal = qty * cmp;
+            const totalPnl = currentVal - invested;
+            const totalPnlPct = invested > 0 ? (totalPnl / invested) * 100 : 0;
+
+            const dayPnl = qty * (cmp - prevClose);
+            const dayPnlPct = prevClose > 0 ? ((cmp - prevClose) / prevClose) * 100 : 0;
+
+            return {
+                invested,
+                currentVal,
+                totalPnl,
+                totalPnlPct,
+                dayPnl,
+                dayPnlPct
+            };
+        }
+
+        // Render Summary & Table
+        function renderDashboard() {
+            let totalInvested = 0;
+            let totalCurrent = 0;
+            let totalDayPnl = 0;
+
+            holdings.forEach(stock => {
+                const m = getStockMetrics(stock);
+                totalInvested += m.invested;
+                totalCurrent += m.currentVal;
+                totalDayPnl += m.dayPnl;
+            });
+
+            const overallPnl = totalCurrent - totalInvested;
+            const overallPnlPct = totalInvested > 0 ? (overallPnl / totalInvested) * 100 : 0;
+            const todayPnlPct = (totalCurrent - totalDayPnl) > 0 ? (totalDayPnl / (totalCurrent - totalDayPnl)) * 100 : 0;
+
+            // Update Top Summary Cards
+            document.getElementById('total-current-val').textContent = formatINR(totalCurrent);
+            document.getElementById('holdings-count').textContent = `${holdings.length} Holding${holdings.length === 1 ? '' : 's'}`;
+
+            document.getElementById('total-invested-val').textContent = formatINR(totalInvested);
+
+            // Total P&L
+            const totalPnlEl = document.getElementById('total-pnl-val');
+            const totalPnlBadge = document.getElementById('badge-total-pnl-pct');
+            const cardTotalPnl = document.getElementById('card-total-pnl');
+            totalPnlEl.textContent = (overallPnl >= 0 ? '+' : '') + formatINR(overallPnl);
+            totalPnlBadge.textContent = formatPct(overallPnlPct);
+
+            if (overallPnl >= 0) {
+                totalPnlEl.className = 'card-value mono text-profit';
+                totalPnlBadge.className = 'badge badge-profit mono';
+                cardTotalPnl.style.setProperty('--card-accent', 'var(--profit)');
+            } else {
+                totalPnlEl.className = 'card-value mono text-loss';
+                totalPnlBadge.className = 'badge badge-loss mono';
+                cardTotalPnl.style.setProperty('--card-accent', 'var(--loss)');
+            }
+
+            // Today's P&L
+            const todayPnlEl = document.getElementById('today-pnl-val');
+            const todayPnlBadge = document.getElementById('badge-today-pnl-pct');
+            const cardTodayPnl = document.getElementById('card-today-pnl');
+            todayPnlEl.textContent = (totalDayPnl >= 0 ? '+' : '') + formatINR(totalDayPnl);
+            todayPnlBadge.textContent = formatPct(todayPnlPct);
+
+            if (totalDayPnl >= 0) {
+                todayPnlEl.className = 'card-value mono text-profit';
+                todayPnlBadge.className = 'badge badge-profit mono';
+                cardTodayPnl.style.setProperty('--card-accent', 'var(--profit)');
+            } else {
+                todayPnlEl.className = 'card-value mono text-loss';
+                todayPnlBadge.className = 'badge badge-loss mono';
+                cardTodayPnl.style.setProperty('--card-accent', 'var(--loss)');
+            }
+
+            // Render Table
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('holdings-tbody');
+            const emptyState = document.getElementById('empty-state');
+            const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+
+            let filtered = holdings.filter(s => 
+                s.symbol.toLowerCase().includes(searchQuery) || 
+                (s.name && s.name.toLowerCase().includes(searchQuery))
+            );
+
+            // Sort
+            filtered.sort((a, b) => {
+                const ma = getStockMetrics(a);
+                const mb = getStockMetrics(b);
+                let valA, valB;
+
+                switch (currentSort.column) {
+                    case 'symbol':
+                        valA = a.symbol;
+                        valB = b.symbol;
+                        break;
+                    case 'qty':
+                        valA = Number(a.qty);
+                        valB = Number(b.qty);
+                        break;
+                    case 'avgPrice':
+                        valA = Number(a.buyPrice);
+                        valB = Number(b.buyPrice);
+                        break;
+                    case 'cmp':
+                        valA = Number(a.cmp);
+                        valB = Number(b.cmp);
+                        break;
+                    case 'invested':
+                        valA = ma.invested;
+                        valB = mb.invested;
+                        break;
+                    case 'currentVal':
+                        valA = ma.currentVal;
+                        valB = mb.currentVal;
+                        break;
+                    case 'todayPnl':
+                        valA = ma.dayPnl;
+                        valB = mb.dayPnl;
+                        break;
+                    case 'totalPnl':
+                    default:
+                        valA = ma.totalPnl;
+                        valB = mb.totalPnl;
+                        break;
+                }
+
+                if (typeof valA === 'string') {
+                    return currentSort.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }
+                return currentSort.asc ? valA - valB : valB - valA;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tbody.innerHTML = filtered.map(stock => {
+                const m = getStockMetrics(stock);
+                const isTotalProfit = m.totalPnl >= 0;
+                const isDayProfit = m.dayPnl >= 0;
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="stock-info">
+                                <span class="stock-symbol">${escapeHTML(stock.symbol)}</span>
+                                <span class="stock-name">${escapeHTML(stock.name || stock.symbol)}</span>
+                            </div>
+                        </td>
+                        <td class="text-right mono">${stock.qty}</td>
+                        <td class="text-right mono">${formatINR(stock.buyPrice)}</td>
+                        <td class="text-right mono">${formatINR(m.invested)}</td>
+                        <td class="text-right mono">
+                            <span style="cursor: pointer; text-decoration: underline dotted var(--accent-primary);" onclick="openQuickPriceModal('${stock.id}')" title="Click to update price">
+                                ${formatINR(stock.cmp)} ✎
+                            </span>
+                        </td>
+                        <td class="text-right mono" style="font-weight: 600;">${formatINR(m.currentVal)}</td>
+                        <td class="text-right mono ${isDayProfit ? 'text-profit' : 'text-loss'}">
+                            <div>${isDayProfit ? '+' : ''}${formatINR(m.dayPnl)}</div>
+                            <small class="badge ${isDayProfit ? 'badge-profit' : 'badge-loss'}">${formatPct(m.dayPnlPct)}</small>
+                        </td>
+                        <td class="text-right mono ${isTotalProfit ? 'text-profit' : 'text-loss'}">
+                            <div style="font-weight: 700;">${isTotalProfit ? '+' : ''}${formatINR(m.totalPnl)}</div>
+                            <small class="badge ${isTotalProfit ? 'badge-profit' : 'badge-loss'}">${formatPct(m.totalPnlPct)}</small>
+                        </td>
+                        <td class="text-right">
+                            <div style="display: inline-flex; gap: 6px;">
+                                <button class="btn-icon" onclick="openEditModal('${stock.id}')" title="Edit Stock Details">
+                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="deleteStock('${stock.id}')" title="Delete Stock">
+                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function escapeHTML(str) {
+            return String(str || '').replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // Modal Handlers
+        const stockModal = document.getElementById('stock-modal');
+        const stockForm = document.getElementById('stock-form');
+        const modalTitle = document.getElementById('modal-title');
+
+        document.getElementById('btn-open-add-modal').addEventListener('click', () => {
+            stockForm.reset();
+            document.getElementById('stock-id').value = '';
+            modalTitle.textContent = 'Add Stock to Portfolio';
+            stockModal.classList.add('active');
+            document.getElementById('form-symbol').focus();
+        });
+
+        function closeModal() {
+            stockModal.classList.remove('active');
+        }
+
+        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+        document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+        stockForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('stock-id').value || 'stock-' + Date.now();
+            const symbol = document.getElementById('form-symbol').value.trim().toUpperCase();
+            const name = document.getElementById('form-name').value.trim() || symbol;
+            const qty = parseFloat(document.getElementById('form-qty').value);
+            const buyPrice = parseFloat(document.getElementById('form-buy-price').value);
+            const cmp = parseFloat(document.getElementById('form-cmp').value);
+            const prevClose = parseFloat(document.getElementById('form-prev-close').value) || cmp;
+
+            const existingIndex = holdings.findIndex(s => s.id === id);
+            const newStock = { id, symbol, name, qty, buyPrice, cmp, prevClose };
+
+            if (existingIndex >= 0) {
+                holdings[existingIndex] = newStock;
+                showToast(`Updated ${symbol}`);
+            } else {
+                holdings.unshift(newStock);
+                showToast(`Added ${symbol} to portfolio`);
+            }
+
+            saveHoldings();
+            closeModal();
+        });
+
+        window.openEditModal = function(id) {
+            const stock = holdings.find(s => s.id === id);
+            if (!stock) return;
+
+            document.getElementById('stock-id').value = stock.id;
+            document.getElementById('form-symbol').value = stock.symbol;
+            document.getElementById('form-name').value = stock.name || '';
+            document.getElementById('form-qty').value = stock.qty;
+            document.getElementById('form-buy-price').value = stock.buyPrice;
+            document.getElementById('form-cmp').value = stock.cmp;
+            document.getElementById('form-prev-close').value = stock.prevClose || stock.cmp;
+
+            modalTitle.textContent = `Edit ${stock.symbol}`;
+            stockModal.classList.add('active');
+        };
+
+        window.deleteStock = function(id) {
+            const stock = holdings.find(s => s.id === id);
+            if (!stock) return;
+            if (confirm(`Are you sure you want to delete ${stock.symbol} from your portfolio?`)) {
+                holdings = holdings.filter(s => s.id !== id);
+                saveHoldings();
+                showToast(`Removed ${stock.symbol}`);
+            }
+        };
+
+        // Quick Price Modal
+        const quickPriceModal = document.getElementById('quick-price-modal');
+        const quickPriceForm = document.getElementById('quick-price-form');
+
+        window.openQuickPriceModal = function(id) {
+            const stock = holdings.find(s => s.id === id);
+            if (!stock) return;
+            document.getElementById('quick-stock-id').value = stock.id;
+            document.getElementById('quick-stock-label').textContent = `${stock.symbol} (${stock.name || ''})`;
+            document.getElementById('quick-cmp').value = stock.cmp;
+            quickPriceModal.classList.add('active');
+            document.getElementById('quick-cmp').focus();
+        };
+
+        function closeQuickPriceModal() {
+            quickPriceModal.classList.remove('active');
+        }
+
+        document.getElementById('btn-close-quick-price').addEventListener('click', closeQuickPriceModal);
+        document.getElementById('btn-cancel-quick-price').addEventListener('click', closeQuickPriceModal);
+
+        quickPriceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('quick-stock-id').value;
+            const newCmp = parseFloat(document.getElementById('quick-cmp').value);
+            const stock = holdings.find(s => s.id === id);
+            if (stock && !isNaN(newCmp) && newCmp > 0) {
+                stock.cmp = newCmp;
+                saveHoldings();
+                showToast(`Updated price for ${stock.symbol}`);
+            }
+            closeQuickPriceModal();
+        });
+
+        // Market Movement Simulator (fluctuates CMP by ±0.4% to ±1.8%)
+        document.getElementById('btn-simulate').addEventListener('click', () => {
+            if (holdings.length === 0) return;
+            holdings.forEach(stock => {
+                const deltaPct = (Math.random() * 3 - 1.4) / 100; // -1.4% to +1.6%
+                const newPrice = stock.cmp * (1 + deltaPct);
+                stock.cmp = parseFloat(newPrice.toFixed(2));
+            });
+            saveHoldings();
+            showToast('Simulated real-time market price movements!');
+        });
+
+        // Reset Demo Data
+        document.getElementById('btn-reset-demo').addEventListener('click', () => {
+            if (confirm('Reset portfolio back to default sample holdings?')) {
+                holdings = JSON.parse(JSON.stringify(DEFAULT_HOLDINGS));
+                saveHoldings();
+                showToast('Reset to demo holdings');
+            }
+        });
+
+        // Search Filter
+        document.getElementById('search-input').addEventListener('input', renderTable);
+
+        // Sorting
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const col = th.dataset.sort;
+                if (currentSort.column === col) {
+                    currentSort.asc = !currentSort.asc;
+                } else {
+                    currentSort.column = col;
+                    currentSort.asc = true;
+                }
+                renderTable();
+            });
+        });
+
+        // Close modals on overlay click
+        [stockModal, quickPriceModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Keyboard Shortcuts: Escape to close modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeQuickPriceModal();
+            }
+        });
+
+        // Init
+        loadHoldings();
+        renderDashboard();
+    </script>
+</body>
+</html>
